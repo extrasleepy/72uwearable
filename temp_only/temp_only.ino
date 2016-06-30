@@ -1,6 +1,6 @@
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
 
-#define ANALOG_INPUT A0  //Analog 5 is connected to temperature sensor
+#define ANALOG_INPUT A0  //Analog 0 is connected to temperature sensor
 
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
