@@ -9,13 +9,10 @@ boolean temp_bool = false, sound_bool = false, light_bool = false;
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
   Serial.begin(9600);             // Setup serial port.
-
-
   resetPixels();
 }
 
 void loop() {
-
   checkSensors();                   //function to check sensors and
   CircuitPlayground.strip.show();   // update pixels!
   delay(500);                       // half second delay between readings
@@ -33,16 +30,19 @@ void checkSensors() {
   Serial.print("raw light= ");
   Serial.println(lightValue, DEC);
 
-  if (lightValue > 900 && lightValue < 1100 && light_bool==false) {   //see if light is within range
+  if (lightValue > 900 && lightValue < 1100) {   //see if light is within range
     for (int fade = 0; fade < 255; fade++) {
       CircuitPlayground.strip.setPixelColor(0, 0, fade, fade);
       CircuitPlayground.strip.setPixelColor(1, 0, fade, fade);
       CircuitPlayground.strip.show();   // update pixels!
-      delay(2);
+      delay(3);
     }
-    light_bool = true;
-  } else {
-    light_bool = false;
+     for (int fade = 255; fade > 0; fade--) {
+      CircuitPlayground.strip.setPixelColor(0, 0, fade, fade);
+      CircuitPlayground.strip.setPixelColor(1, 0, fade, fade);
+      CircuitPlayground.strip.show();   // update pixels!
+      delay(3);
+    }
   }
 
   if (soundValue > 320 && soundValue < 360) {    //see if sound is within range
@@ -50,22 +50,29 @@ void checkSensors() {
       CircuitPlayground.strip.setPixelColor(3, fade, fade, 0);
       CircuitPlayground.strip.setPixelColor(4, fade, fade, 0);
       CircuitPlayground.strip.show();   // update pixels!
-      delay(2);
+      delay(3);
     }
-    sound_bool = true;
-  } else {
-    sound_bool = false;
+    for (int fade = 255; fade > 0; fade--) {
+      CircuitPlayground.strip.setPixelColor(3, fade, fade, 0);
+      CircuitPlayground.strip.setPixelColor(4, fade, fade, 0);
+      CircuitPlayground.strip.show();   // update pixels!
+      delay(3);
+    }
   }
 
   if (tempValue > 500 && tempValue < 550) {     //see if temp is within range
     for (int fade = 0; fade < 255; fade++) {
       CircuitPlayground.strip.setPixelColor(6, fade, 0, fade);
-      CircuitPlayground.strip.setPixelColor(7, fade, 0, 255);
+      CircuitPlayground.strip.setPixelColor(7, fade, 0, fade);
       CircuitPlayground.strip.show();   // update pixels!
+      delay(3);
     }
-    temp_bool = true;
-  } else {
-    temp_bool = false;
+     for (int fade = 255; fade > 0; fade--) {
+      CircuitPlayground.strip.setPixelColor(6, fade, 0, fade);
+      CircuitPlayground.strip.setPixelColor(7, fade, 0, fade);
+      CircuitPlayground.strip.show();   // update pixels!
+      delay(3);
+    }
   }
 
   if (light_bool == true && sound_bool == true && temp_bool == true) { //all sensor parameters met
