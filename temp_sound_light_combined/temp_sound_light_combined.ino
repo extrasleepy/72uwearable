@@ -11,6 +11,8 @@ void setup() {
 
   Serial.begin(9600);     // Setup serial port.
 
+  CircuitPlayground.strip.setBrightness(200); //brightness is between 0 and 255
+
 }
 
 void loop() {
