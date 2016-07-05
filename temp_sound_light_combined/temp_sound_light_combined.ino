@@ -29,19 +29,19 @@ void loop() {
   Serial.println(lightValue, DEC);
 
   if (tempValue > 500 && tempValue < 550) {     //see if temp is within range
-    CircuitPlayground.strip.setPixelColor(0, 255, 0, 255);
-    CircuitPlayground.strip.setPixelColor(1, 255, 0, 255);
+    CircuitPlayground.strip.setPixelColor(0, 255, 0, 255);   //magenta
+    CircuitPlayground.strip.setPixelColor(1, 255, 0, 255);   //magenta
   }
 
   if (soundValue > 300 && soundValue < 400) {    //see if sound is within range
-    CircuitPlayground.strip.setPixelColor(3, 255, 255, 0);
-    CircuitPlayground.strip.setPixelColor(4, 255, 255, 0);
+    CircuitPlayground.strip.setPixelColor(3, 255, 255, 0);    //yellow
+    CircuitPlayground.strip.setPixelColor(4, 255, 255, 0);    //yellow
   }
 
 
   if (lightValue > 900 && lightValue < 1100) {   //see if light is within range
-    CircuitPlayground.strip.setPixelColor(5, 0, 255, 255);
-    CircuitPlayground.strip.setPixelColor(6, 0, 255, 255);
+    CircuitPlayground.strip.setPixelColor(5, 0, 255, 255);     //cyan
+    CircuitPlayground.strip.setPixelColor(6, 0, 255, 255);     //cyan
   }
 
   CircuitPlayground.strip.show();  // update pixels!
