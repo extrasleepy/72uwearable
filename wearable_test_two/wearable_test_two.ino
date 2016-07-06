@@ -17,7 +17,6 @@ void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
   CircuitPlayground.strip.setBrightness(200); //brightness is between 0 and 255
   Serial.begin(9600);     // Setup serial port.
-
 }
 
 void loop() {
@@ -34,14 +33,12 @@ void loop() {
   Serial.println(lightValue, DEC);
 
   checkValues(tempValue, soundValue, lightValue);
-
   CircuitPlayground.strip.show();  // update pixels!
-  delay(500); // half second delay between readings
+  delay(100); // 10th second delay between readings
 
   for (int i = 0; i < 10; i++) {   //turn off pixels (only visible if above parameters not met)
     CircuitPlayground.strip.setPixelColor(i, 0, 0, 0);
   }
-
 }
 
 uint16_t checkValues(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
@@ -114,7 +111,13 @@ uint16_t checkValues(uint16_t tempValue, uint16_t soundValue, uint16_t lightValu
       CircuitPlayground.strip.show();  // update pixels!
       delayMicroseconds(2000);
     }
-
   }
+}
+
+void reaction(){
+
+
+
+
 }
 

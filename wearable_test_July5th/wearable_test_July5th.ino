@@ -1,0 +1,61 @@
+#include <Adafruit_CircuitPlayground.h>   //required library to use module
+
+#define TEMP A0  //Analog 0 is connected to temperature sensor
+#define SOUND A4  //Analog 4 is connected to sound sensor/microphone
+#define LIGHT A5  //Analog 5 is connected to light sensor
+
+float tMin = 510;   //min max variables for sensors
+float tMax = 580;
+float sMin = 300;
+float sMax = 400;
+float lMin = 900;
+float lMax = 1100;
+
+bool tempRange = false;
+bool soundRange = false;
+bool lightRange = false;
+
+int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used pins
+
+void setup() {
+  CircuitPlayground.begin();     // Setup Circuit Playground library.
+  CircuitPlayground.strip.setBrightness(200); //brightness is between 0 and 255
+  Serial.begin(9600);     // Setup serial port.
+}
+
+void loop() {
+
+  // Get the sensor sensor values and print it to Serial Monitor
+  uint16_t tempValue = analogRead(TEMP);
+  uint16_t soundValue = analogRead(SOUND);
+  uint16_t lightValue = analogRead(LIGHT);
+  Serial.print("raw temp= ");
+  Serial.println(tempValue, DEC);
+  Serial.print("raw sound= ");
+  Serial.println(soundValue, DEC);
+  Serial.print("raw light= ");
+  Serial.println(lightValue, DEC);
+
+  checkValues(tempValue, soundValue, lightValue);
+  CircuitPlayground.strip.show();  // update pixels!
+  delay(100); // 10th second delay between readings
+
+  for (int i = 0; i < 10; i++) {   //turn off pixels (only visible if above parameters not met)
+    CircuitPlayground.strip.setPixelColor(i, 0, 0, 0);
+  }
+}
+
+uint16_t checkValues(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
+  if (tempValue > tMin && tempValue < tMax) {     //see if temp is within range
+    tempRange=true;
+  }
+
+  if (soundValue > sMin && soundValue < sMax) {    //see if sound is within range
+     soundRange=true;
+  }
+
+  if (lightValue > lMin && lightValue < lMax) {   //see if light is within range
+     lightRange=true;
+  }
+}
+
