@@ -1,5 +1,14 @@
 //Code for 72u wearable electroincs project. Summer 2016
 
+/* TODO::
+   ->White lights spin 2 times when all parameters are correct
+   ->Improve tones + Do we want sound at all? Get rid of clicking after tones play
+   ->How often do we see the lights? 3 glows every 15 minutes?
+   ->Go into deep sleep when no movement is detected over how long + wake up on accelerometer movement
+   ->Touch "remember an idea" sequence
+   ->We need real numbers on the sensor min/max values
+*/
+
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
 #include <Narcoleptic.h>  //library that allows low power sleeping
 
