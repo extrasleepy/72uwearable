@@ -68,14 +68,14 @@ uint16_t checkValues(uint16_t tempValue, uint16_t soundValue, uint16_t lightValu
   } else {
     if (tempValue > tMin && tempValue < tMax) {     //see if temp is within range
       for (int fd = 0; fd < 255; fd++) {
-        CircuitPlayground.strip.setPixelColor(0, fd, 0, fd);   //magenta
-        CircuitPlayground.strip.setPixelColor(9, fd, 0, fd);   //magenta
+        CircuitPlayground.strip.setPixelColor(0, fd, 0, fd);   //magenta (temp)
+        CircuitPlayground.strip.setPixelColor(9, fd, 0, fd);   //magenta (temp)
         CircuitPlayground.strip.show();  // update pixels!
         delayMicroseconds(2000);
       }
       for (int fd = 255; fd > 0; fd--) {
-        CircuitPlayground.strip.setPixelColor(0, fd, 0, fd);   //magenta
-        CircuitPlayground.strip.setPixelColor(9, fd, 0, fd);   //magenta
+        CircuitPlayground.strip.setPixelColor(0, fd, 0, fd);   //magenta (temp)
+        CircuitPlayground.strip.setPixelColor(9, fd, 0, fd);   //magenta (temp)
         CircuitPlayground.strip.show();  // update pixels!
         delayMicroseconds(2000);
       }
@@ -84,14 +84,14 @@ uint16_t checkValues(uint16_t tempValue, uint16_t soundValue, uint16_t lightValu
 
   if (soundValue > sMin && soundValue < sMax) {    //see if sound is within range
     for (int fd = 0; fd < 255; fd++) {
-      CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);    //yellow
-      CircuitPlayground.strip.setPixelColor(4, fd, fd, 0);    //yellow
+      CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);    //yellow (sound)
+      CircuitPlayground.strip.setPixelColor(4, fd, fd, 0);    //yellow (sound)
       CircuitPlayground.strip.show();  // update pixels!
       delayMicroseconds(2000);
     }
     for (int fd = 255; fd > 0; fd--) {
-      CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);    //yellow
-      CircuitPlayground.strip.setPixelColor(4, fd, fd, 0);    //yellow
+      CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);    //yellow (sound)
+      CircuitPlayground.strip.setPixelColor(4, fd, fd, 0);    //yellow (sound)
       CircuitPlayground.strip.show();  // update pixels!
       delayMicroseconds(2000);
     }
@@ -100,14 +100,14 @@ uint16_t checkValues(uint16_t tempValue, uint16_t soundValue, uint16_t lightValu
   if (lightValue > lMin && lightValue < lMax) {   //see if light is within range
 
     for (int fd = 0; fd < 255; fd++) {
-      CircuitPlayground.strip.setPixelColor(5, 0, fd, fd);     //cyan
-      CircuitPlayground.strip.setPixelColor(7, 0, fd, fd);     //cyan
+      CircuitPlayground.strip.setPixelColor(5, 0, fd, fd);     //cyan (light)
+      CircuitPlayground.strip.setPixelColor(7, 0, fd, fd);     //cyan (light)
       CircuitPlayground.strip.show();  // update pixels!
       delayMicroseconds(2000);
     }
     for (int fd = 255; fd > 0; fd--) {
-      CircuitPlayground.strip.setPixelColor(5, 0, fd, fd);    //yellow
-      CircuitPlayground.strip.setPixelColor(7, 0, fd, fd);    //yellow
+      CircuitPlayground.strip.setPixelColor(5, 0, fd, fd);    //cyan (light)
+      CircuitPlayground.strip.setPixelColor(7, 0, fd, fd);    //cyan (light)
       CircuitPlayground.strip.show();  // update pixels!
       delayMicroseconds(2000);
     }
