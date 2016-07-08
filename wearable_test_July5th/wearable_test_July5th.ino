@@ -2,15 +2,18 @@
 
 /* TODO::
    ->White lights spin 2 times when all parameters are correct
-   ->Improve tones + Do we want sound at all? Get rid of clicking after tones play
-   ->How often do we see the lights? 3 glows every 15 minutes?
+   ->What's the final color when all parameters are met
+   ->Improve tones
+   ->Perfect environment tone should only play once per 4 hours? even if you temporarily exit perfect environment. If you don't leave perfect environment, it won't go off ever again.
+   ->How often do we see the lights? once every 60 sec
    ->Go into deep sleep when no movement is detected over how long + wake up on accelerometer movement
-   ->Touch "remember an idea" sequence
+   ->Touch "remember an idea" sequence  - - reminder after 2 hours.
    ->We need real numbers on the sensor min/max values
+   ->light should change to yellow, temp should be cyan, magenta sound 
 */
 
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
-#include <Narcoleptic.h>  //library that allows low power sleeping
+//#include <Narcoleptic.h>  //library that allows low power sleeping
 
 #define TEMP A0  //Analog 0 is connected to temperature sensor
 #define SOUND A4  //Analog 4 is connected to sound sensor/microphone
@@ -26,8 +29,8 @@ float lMin = 900;
 float lMax = 1100;
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
-int tones[] = {300, 500, 580};   //array for adding sound
-int tlength[] = {200, 250, 400};  //array for adding sound durations
+int tones[] = {100, 500, 1000};   //array for adding sound
+int tlength[] = {200, 250, 1000};  //array for adding sound durations
 
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
@@ -49,7 +52,7 @@ void loop() {
   Serial.println(lightValue, DEC);
 
   lightUp(tempValue, soundValue, lightValue);   //function to lights fades
-  delay(5000);
+  delay(5000);    //eventually 60 sec
   //Narcoleptic.delay(5000); // 5 second sleep between readings <----bring in later
 }
 
@@ -78,7 +81,7 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
         CircuitPlayground.strip.setPixelColor(9, fd, 0, fd);   //magenta (temp)
       }
       if (soundValue > sMin && soundValue < sMax) {
-        CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);    //yellow (sound)
+        CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);    //yellow (sound) 
         CircuitPlayground.strip.setPixelColor(4, fd, fd, 0);    //yellow (sound)
       }
       if (lightValue > lMin && lightValue < lMax) {
