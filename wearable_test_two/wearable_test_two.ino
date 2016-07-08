@@ -71,13 +71,13 @@ uint16_t checkValues(uint16_t tempValue, uint16_t soundValue, uint16_t lightValu
         CircuitPlayground.strip.setPixelColor(0, fd, 0, fd);   //magenta (temp)
         CircuitPlayground.strip.setPixelColor(9, fd, 0, fd);   //magenta (temp)
         CircuitPlayground.strip.show();  // update pixels!
-        delayMicroseconds(2000);
+        delayMicroseconds(2500);
       }
       for (int fd = 255; fd > 0; fd--) {
         CircuitPlayground.strip.setPixelColor(0, fd, 0, fd);   //magenta (temp)
         CircuitPlayground.strip.setPixelColor(9, fd, 0, fd);   //magenta (temp)
         CircuitPlayground.strip.show();  // update pixels!
-        delayMicroseconds(2000);
+        delayMicroseconds(2500);
       }
     }
   }
@@ -87,13 +87,13 @@ uint16_t checkValues(uint16_t tempValue, uint16_t soundValue, uint16_t lightValu
       CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);    //yellow (sound)
       CircuitPlayground.strip.setPixelColor(4, fd, fd, 0);    //yellow (sound)
       CircuitPlayground.strip.show();  // update pixels!
-      delayMicroseconds(2000);
+      delayMicroseconds(2500);
     }
     for (int fd = 255; fd > 0; fd--) {
       CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);    //yellow (sound)
       CircuitPlayground.strip.setPixelColor(4, fd, fd, 0);    //yellow (sound)
       CircuitPlayground.strip.show();  // update pixels!
-      delayMicroseconds(2000);
+      delayMicroseconds(2500);
     }
   }
 
@@ -103,13 +103,13 @@ uint16_t checkValues(uint16_t tempValue, uint16_t soundValue, uint16_t lightValu
       CircuitPlayground.strip.setPixelColor(5, 0, fd, fd);     //cyan (light)
       CircuitPlayground.strip.setPixelColor(7, 0, fd, fd);     //cyan (light)
       CircuitPlayground.strip.show();  // update pixels!
-      delayMicroseconds(2000);
+      delayMicroseconds(2500);
     }
     for (int fd = 255; fd > 0; fd--) {
       CircuitPlayground.strip.setPixelColor(5, 0, fd, fd);    //cyan (light)
       CircuitPlayground.strip.setPixelColor(7, 0, fd, fd);    //cyan (light)
       CircuitPlayground.strip.show();  // update pixels!
-      delayMicroseconds(2000);
+      delayMicroseconds(2500);
     }
   }
 }
