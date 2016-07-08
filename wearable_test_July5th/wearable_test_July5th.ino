@@ -115,7 +115,7 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
       }
     }
     CircuitPlayground.strip.show();  // update pixels!
-    delay(5);
+    delay(10);
   }
 
   //fade out loop
@@ -141,7 +141,7 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
       }
     }
     CircuitPlayground.strip.show();  // update pixels!
-    delay(5);
+    delay(10);
   }
 }
 
