@@ -3,12 +3,12 @@
 /* TODO::
    ->White lights spin 2 times when all parameters are correct
    ->What's the final color when all parameters are met
-   ->Improve tones
+   ->Make cool tones (JAVI working on this)
    ->Perfect environment tone should only play once per 4 hours? even if you temporarily exit perfect environment. If you don't leave perfect environment, it won't go off ever again.
    ->How often do we see the lights? once every 60 sec
    ->Go into deep sleep when no movement is detected over how long + wake up on accelerometer movement
    ->Touch "remember an idea" sequence  - - reminder after 2 hours.
-   ->We need real numbers on the sensor min/max values
+   ->We need real numbers on the sensor min/max values (JAVI working on this)
    ->light should change to yellow, temp should be cyan, magenta sound 
 */
 
