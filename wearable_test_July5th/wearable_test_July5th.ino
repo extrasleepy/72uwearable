@@ -6,7 +6,7 @@
    ->Make cool tones (JAVI working on this)
    ->Perfect environment tone should only play once per 4 hours? even if you temporarily exit perfect environment. If you don't leave perfect environment, it won't go off ever again.
    DONE: (needs to be uncommented) How often do we see the lights? once every 60 sec
-   ->Go into deep sleep when no movement is detected over how long + wake up on accelerometer movement
+   ->Go into deep sleep when no movement is detected over 1 hour wake up on accelerometer movement (D3 is interrupt)
    ->Touch "remember an idea" sequence  - - reminder after 2 hours.
    ->We need real numbers on the sensor min/max values (JAVI working on this)
    DONE: light should change to yellow, temp should be cyan, magenta sound
