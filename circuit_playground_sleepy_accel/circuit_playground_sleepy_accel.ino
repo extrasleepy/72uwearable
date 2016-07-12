@@ -1,12 +1,14 @@
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
 //#include <Narcoleptic.h>
 
-int xPrevious = 0;
-int yPrevious = 0;
-int zPrevious = 0;
-int xMove = 0;
-int yMove = 0;
-int zMove = 0;
+uint8_t xPrevious = 0;
+uint8_t yPrevious = 0;
+uint8_t zPrevious = 0;
+uint8_t xMove = 0;
+uint8_t yMove = 0;
+uint8_t zMove = 0;
+
+int movetimer = 0;
 
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
@@ -16,26 +18,54 @@ void setup() {
 }
 
 void loop() {
-  CircuitPlayground.strip.setPixelColor(1, 255, 255, 255);  //white
+
+  xMove = CircuitPlayground.motionX();
+  yMove = CircuitPlayground.motionY();
+  zMove = CircuitPlayground.motionZ();
+  //Serial.println(xMove);
+  //Serial.println(yMove);
+  //Serial.println(zMove);
+
+  if (xMove >= xPrevious - 1 && xMove <= xPrevious + 1 && yMove >= yPrevious - 1 && yMove <= yPrevious + 1 && zMove >= zPrevious - 1 && zMove <= zPrevious + 1) {
+    movetimer++;
+    if (movetimer > 25) {
+      sleepyTime();
+    }
+
+  }
+  else {
+    Serial.println("moving");
+    movetimer = 0;
+    CircuitPlayground.strip.setPixelColor(1, 255, 255, 255);  //white
+    CircuitPlayground.strip.show();  // update pixels!
+  }
+
+  xPrevious = xMove;
+  yPrevious = yMove;
+  zPrevious = zMove;
+
+  delay(500);
+
+}
+
+void sleepyTime() {
+
+  Serial.println("sleeping");
+  CircuitPlayground.strip.setPixelColor(1, 0, 0, 0); //white
   CircuitPlayground.strip.show();  // update pixels!
 
   xMove = CircuitPlayground.motionX();
   yMove = CircuitPlayground.motionY();
   zMove = CircuitPlayground.motionZ();
-  Serial.println(xMove);
-  // Serial.println(yMove);
-  //Serial.println(zMove);
 
-  if (xMove == xPrevious) {
-    Serial.println("not moving");
+  if (xMove >= xPrevious - 1 && xMove <= xPrevious + 1 && yMove >= yPrevious - 1 && yMove <= yPrevious + 1 && zMove >= zPrevious - 1 && zMove <= zPrevious + 1) {
+    delay(500);
   }
-
-  uint8_t xPrevious = xMove;
-  uint8_t yPrevious = yMove;
-  uint8_t zPrevious = zMove;
-
-  Serial.println(xPrevious);
-
-  delay(100);
-
+  else {
+    movetimer = 0;
+  }
+  xPrevious = xMove;
+  yPrevious = yMove;
+  zPrevious = zMove;
 }
+
