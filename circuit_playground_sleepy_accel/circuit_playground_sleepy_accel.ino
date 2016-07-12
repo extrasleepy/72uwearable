@@ -1,5 +1,6 @@
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
-//#include <Narcoleptic.h>
+#include <Adafruit_SleepyDog.h>
+
 
 uint8_t xPrevious = 0;
 uint8_t yPrevious = 0;
@@ -8,7 +9,7 @@ uint8_t xMove = 0;
 uint8_t yMove = 0;
 uint8_t zMove = 0;
 
-int movetimer = 0;
+int moveTimer = 0;
 
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
@@ -28,7 +29,7 @@ void loop() {
 
   if (xMove >= xPrevious - 1 && xMove <= xPrevious + 1 && yMove >= yPrevious - 1 && yMove <= yPrevious + 1 && zMove >= zPrevious - 1 && zMove <= zPrevious + 1) {
     movetimer++;
-    if (movetimer > 25) {
+    if (moveTimer > 25) {
       sleepyTime();
     }
 
@@ -59,10 +60,10 @@ void sleepyTime() {
   zMove = CircuitPlayground.motionZ();
 
   if (xMove >= xPrevious - 1 && xMove <= xPrevious + 1 && yMove >= yPrevious - 1 && yMove <= yPrevious + 1 && zMove >= zPrevious - 1 && zMove <= zPrevious + 1) {
-    delay(500);
+     Watchdog.sleep(2000);
   }
   else {
-    movetimer = 0;
+    moveTimer = 0;
   }
   xPrevious = xMove;
   yPrevious = yMove;

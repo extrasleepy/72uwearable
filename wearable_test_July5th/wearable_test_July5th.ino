@@ -2,18 +2,22 @@
 
 /* TODO::
    DONE: White lights spin 2 times when all parameters are correct BUT ONLY ONCE PER SESSION
-   ->What's the final color when all parameters are met??
+   ->What's the final color when all parameters are met?? currently white.
    ->Make cool tones (JAVI working on this)
    ->Perfect environment tone should only play once per 4 hours? even if you temporarily exit perfect environment. If you don't leave perfect environment, it won't go off ever again.
    DONE: (needs to be uncommented) How often do we see the lights? once every 60 sec
-   ->Go into deep sleep when no movement is detected over 30 min wake up on accelerometer movement (D3 D4 are interrupts)
+   ->Go sleep when no movement is detected over 30 min wake up on accelerometer movement (D3 D4 are interrupts)
    ->Touch "remember an idea" sequence  - - reminder after 2 hours.
    ->We need real numbers on the sensor min/max values (JAVI working on this)
    DONE: light should change to yellow, temp should be cyan, magenta sound
+
+   Hardware Hacks:
+   -> Remove Battery connection from main circuit
+   -> Remove or break power LED
 */
 
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
-//#include <Narcoleptic.h>  //library that allows low power sleeping
+#include <Adafruit_SleepyDog.h>  //library that allows low power sleeping
 
 #define TEMP A0  //Analog 0 is connected to temperature sensor
 #define SOUND A4  //Analog 4 is connected to sound sensor/microphone
@@ -55,7 +59,6 @@ void loop() {
 
   lightUp(tempValue, soundValue, lightValue);   //function to lights fades
   delay(5000);    // eventually 60 sec
-  //Narcoleptic.delay(60000); // 60 second sleep between readings <----bring in later
 }
 
 
