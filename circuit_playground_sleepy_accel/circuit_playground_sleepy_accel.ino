@@ -23,12 +23,9 @@ void loop() {
   xMove = CircuitPlayground.motionX();
   yMove = CircuitPlayground.motionY();
   zMove = CircuitPlayground.motionZ();
-  //Serial.println(xMove);
-  //Serial.println(yMove);
-  //Serial.println(zMove);
 
   if (xMove >= xPrevious - 1 && xMove <= xPrevious + 1 && yMove >= yPrevious - 1 && yMove <= yPrevious + 1 && zMove >= zPrevious - 1 && zMove <= zPrevious + 1) {
-    movetimer++;
+    moveTimer++;
     if (moveTimer > 25) {
       sleepyTime();
     }
@@ -36,7 +33,7 @@ void loop() {
   }
   else {
     Serial.println("moving");
-    movetimer = 0;
+    moveTimer = 0;
     CircuitPlayground.strip.setPixelColor(1, 255, 255, 255);  //white
     CircuitPlayground.strip.show();  // update pixels!
   }
