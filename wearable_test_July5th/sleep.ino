@@ -17,4 +17,5 @@ void sleepyTime() {
   xPrevious = xMove;
   yPrevious = yMove;
   zPrevious = zMove;
+  loop();
 }

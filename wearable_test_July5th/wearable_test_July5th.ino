@@ -27,10 +27,18 @@
 
 float tMin = 510;   //min max variables for sensors   < - - - these are currently a little arbitrary
 float tMax = 580;
-float sMin = 300;
-float sMax = 400;
+float sMin = 500;
+float sMax = 700;
 float lMin = 900;
 float lMax = 1100;
+
+uint8_t xPrevious = 0;  //variables to test movement for sleep mode
+uint8_t yPrevious = 0;
+uint8_t zPrevious = 0;
+uint8_t xMove = 0;
+uint8_t yMove = 0;
+uint8_t zMove = 0;
+int moveTimer = 0;
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
 int tones[] = {100, 500, 1000};   //array for adding sound
@@ -45,6 +53,24 @@ void setup() {
 }
 
 void loop() {
+  //check for movement
+  xMove = CircuitPlayground.motionX();
+  yMove = CircuitPlayground.motionY();
+  zMove = CircuitPlayground.motionZ();
+
+  //if no movement enter sleep
+  if (xMove >= xPrevious - 1 && xMove <= xPrevious + 1 && yMove >= yPrevious - 1 && yMove <= yPrevious + 1 && zMove >= zPrevious - 1 && zMove <= zPrevious + 1) {
+    moveTimer++;
+    Serial.println(moveTimer);
+    if (moveTimer > 2) {
+      sleepyTime();
+    }
+  }
+  else {
+    Serial.println("moving");
+    moveTimer = 0;
+  }
+
   // Get the sensor sensor values
   uint16_t tempValue = analogRead(TEMP);
   uint16_t soundValue = analogRead(SOUND);
@@ -58,37 +84,42 @@ void loop() {
   Serial.println(lightValue, DEC);
 
   lightUp(tempValue, soundValue, lightValue);   //function to lights fades
+
   delay(5000);    // eventually 60 sec
+
+  xPrevious = xMove;
+  yPrevious = yMove;
+  zPrevious = zMove;
 }
 
 
 uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
 
   //play tone if environment is perfect   <----causing clicking??
-  if (tempValue > tMin && tempValue < tMax && soundValue > sMin && soundValue < sMax && lightValue > lMin && lightValue < lMax && resetSpin==true) {
-    for (int i = 0; i <= sizeof(tones-1); i++) {
+  if (tempValue > tMin && tempValue < tMax && soundValue > sMin && soundValue < sMax && lightValue > lMin && lightValue < lMax && resetSpin == true) {
+    for (int i = 0; i <= sizeof(tones - 1); i++) {
       CircuitPlayground.playTone(tones[i], tlength[i]);
       delay(tlength[i]);
     }
-    
+
     //spin twice
     for (int spin = 0; spin < 3; spin++) {   //spin happens twice
       for (int i = 0; i < 10; i++) {    //fade each of the 6 lights
-        for (int fd = 0; fd <= 255; fd+=3) {
+        for (int fd = 0; fd <= 255; fd += 3) {
           CircuitPlayground.strip.setPixelColor(i, fd, fd, fd);   //white
-          CircuitPlayground.strip.setPixelColor(9-i, fd, fd, fd);   //white
+          CircuitPlayground.strip.setPixelColor(9 - i, fd, fd, fd); //white
           CircuitPlayground.strip.show();  // update pixels!
           delayMicroseconds(1);
         }
-        for (int fd = 255; fd >= 0; fd-=3) {
+        for (int fd = 255; fd >= 0; fd -= 3) {
           CircuitPlayground.strip.setPixelColor(i, fd, fd, fd);   //white
-          CircuitPlayground.strip.setPixelColor(9-i, fd, fd, fd);   //white
+          CircuitPlayground.strip.setPixelColor(9 - i, fd, fd, fd); //white
           CircuitPlayground.strip.show();  // update pixels!
           delayMicroseconds(1);
         }
       }
     }
-    resetSpin=false;
+    resetSpin = false;
   }
 
   //fade in loop
@@ -100,8 +131,8 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
       }
     }
     else {
-      resetSpin=true;
-      
+      resetSpin = true;
+
       if (tempValue > tMin && tempValue < tMax) {
         CircuitPlayground.strip.setPixelColor(5, 0, fd, fd);     //cyan (temp)
         CircuitPlayground.strip.setPixelColor(7, 0, fd, fd);     //cyan (temp)
@@ -147,4 +178,3 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
     delay(10);
   }
 }
-
