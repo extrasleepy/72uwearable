@@ -19,8 +19,7 @@
 */
 
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
-//#include <Adafruit_SleepyDog.h>  //library that allows low power sleeping
-//#include <Narcoleptic.h>
+#include <Adafruit_SleepyDog.h>  //library that allows low power sleeping
 
 
 #define TEMP A0  //Analog 0 is connected to temperature sensor
@@ -87,12 +86,12 @@ void loop() {
   uint16_t soundValue = analogRead(SOUND);
   uint16_t lightValue = analogRead(LIGHT);
   //print sensor values to serial monitor  < --- comment out later to save power
-  Serial.print("raw temp= ");
-  Serial.println(tempValue, DEC);
-  Serial.print("raw sound= ");
-  Serial.println(soundValue, DEC);
-  Serial.print("raw light= ");
-  Serial.println(lightValue, DEC);
+//  Serial.print("raw temp= ");
+//  Serial.println(tempValue, DEC);
+//  Serial.print("raw sound= ");
+//  Serial.println(soundValue, DEC);
+//  Serial.print("raw light= ");
+//  Serial.println(lightValue, DEC);
 
   if ((millis() - sinceLastFade) > (fadeInterval))
   {
@@ -100,7 +99,7 @@ void loop() {
     lightUp(tempValue, soundValue, lightValue);   //function to lights fades
   }
   delay(1000);
-  loop();         //necessary, don't ask why :)
+  //loop();         //necessary, don't ask why :)
 }
 
 uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
@@ -200,7 +199,7 @@ void sleepyTime() {
   zMove = CircuitPlayground.motionZ();
 
   if (xMove >= xPrevious - moveFlex && xMove <= xPrevious + moveFlex && yMove >= yPrevious - moveFlex && yMove <= yPrevious + moveFlex && zMove >= zPrevious - moveFlex && zMove <= zPrevious + moveFlex) {
-    delay(1500);
+    Watchdog.sleep(1500);
   }
   else {
     moveTimer = 0;
@@ -209,5 +208,5 @@ void sleepyTime() {
   yPrevious = yMove;
   zPrevious = zMove;
 
-  loop();
+  //loop();
 }
