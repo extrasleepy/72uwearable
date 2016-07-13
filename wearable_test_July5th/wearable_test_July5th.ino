@@ -10,10 +10,12 @@
    ->Touch "remember an idea" sequence  - - reminder after 2 hours.
    ->We need real numbers on the sensor min/max values (JAVI working on this)
    DONE: light should change to yellow, temp should be cyan, magenta sound
+   -> Bug that causes lights to get stuck in crazy colors after some time. Might be related to SleepyDog?
 
    Hardware Hacks:
    DONE -> Remove Battery connection from main circuit
    -> Remove or break power LED
+   -> Battery not running unit when hooked to vbatt. Look into it.
 */
 
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
@@ -196,7 +198,7 @@ void sleepyTime() {
   zMove = CircuitPlayground.motionZ();
 
   if (xMove >= xPrevious - moveFlex && xMove <= xPrevious + moveFlex && yMove >= yPrevious - moveFlex && yMove <= yPrevious + moveFlex && zMove >= zPrevious - moveFlex && zMove <= zPrevious + moveFlex) {
-    Watchdog.sleep(1500);
+    delay(1500);
   }
   else {
     moveTimer = 0;
