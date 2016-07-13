@@ -19,7 +19,9 @@
 */
 
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
-#include <Adafruit_SleepyDog.h>  //library that allows low power sleeping
+//#include <Adafruit_SleepyDog.h>  //library that allows low power sleeping
+//#include <Narcoleptic.h>
+
 
 #define TEMP A0  //Analog 0 is connected to temperature sensor
 #define SOUND A4  //Analog 4 is connected to sound sensor/microphone
@@ -50,8 +52,8 @@ int tones[] = {100, 500, 1000};   //array for adding sound
 int tlength[] = {200, 250, 200};  //array for adding sound durations
 
 bool resetSpin = true;
-long fadeInterval = 60000; //60ish seconds
-long sinceLastFade = 59000; //fades one time right away when powered up
+long fadeInterval = 30000; //60ish seconds
+long sinceLastFade = 29000; //fades one time right away when powered up
 
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
