@@ -49,7 +49,7 @@ int tlength[] = {200, 250, 200};  //array for adding sound durations
 
 bool resetSpin = true;
 long fadeInterval = 60000; //60ish seconds
-long sinceLastFade = 59000;
+long sinceLastFade = 59000; //fades one time right away when powered up
 
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
