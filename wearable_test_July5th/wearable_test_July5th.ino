@@ -41,7 +41,7 @@ uint8_t zMove = 0;
 
 int moveFlex = 2; //a little flexibility for minor vibrations
 int moveTimer = 0;
-int verySleepy = 900; //1 represents about 1 second + time of total light fades (900 = 15ish min)
+int verySleepy = 900; //1 represents about 1 second + total light fade times (900 = 20ish min)
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
 int tones[] = {100, 500, 1000};   //array for adding sound
