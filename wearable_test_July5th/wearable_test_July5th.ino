@@ -5,7 +5,7 @@
    ->What's the final color when all parameters are met?? currently white.
    ->Make cool tones (JAVI working on this)
    DONE: If you don't leave perfect environment, tone won't play again.
-   DONE: (needs to be uncommented) How often do we see the lights? once every 60 sec
+   DONE: How often do we see the lights? once every 60 sec
    DONE:nGo sleep when no movement is detected over 15 min wake up on accelerometer movement (D3 D4 are interrupts)
    ->Touch "remember an idea" sequence  - - reminder after 2 hours.
    ->We need real numbers on the sensor min/max values (JAVI working on this)
@@ -41,13 +41,15 @@ uint8_t zMove = 0;
 
 int moveFlex = 2; //a little flexibility for minor vibrations
 int moveTimer = 0;
-int verySleepy = 10; //1 represents about 10 seconds (90 = 15 min)
+int verySleepy = 900; //1 represents about 1 second + time of total light fades (900 = 15ish min)
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
 int tones[] = {100, 500, 1000};   //array for adding sound
 int tlength[] = {200, 250, 200};  //array for adding sound durations
 
 bool resetSpin = true;
+long fadeInterval = 60000; //60ish seconds
+long sinceLastFade = 59000;
 
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
@@ -80,7 +82,7 @@ void loop() {
   uint16_t tempValue = analogRead(TEMP);
   uint16_t soundValue = analogRead(SOUND);
   uint16_t lightValue = analogRead(LIGHT);
-  //print sensor values to serial monitor  < --- comment out to save power
+  //print sensor values to serial monitor  < --- comment out later to save power
   Serial.print("raw temp= ");
   Serial.println(tempValue, DEC);
   Serial.print("raw sound= ");
@@ -88,12 +90,14 @@ void loop() {
   Serial.print("raw light= ");
   Serial.println(lightValue, DEC);
 
-  lightUp(tempValue, soundValue, lightValue);   //function to lights fades
-
-  delay(5000);    // eventually 60 sec
-  loop();         //necessary
+  if ((millis() - sinceLastFade) > (fadeInterval))
+  {
+    sinceLastFade = millis();
+    lightUp(tempValue, soundValue, lightValue);   //function to lights fades
+  }
+  delay(1000);
+  loop();         //necessary, don't ask why :)
 }
-
 
 uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
 
