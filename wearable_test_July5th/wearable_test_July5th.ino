@@ -4,15 +4,15 @@
    DONE: White lights spin 2 times when all parameters are correct BUT ONLY ONCE PER SESSION
    ->What's the final color when all parameters are met?? currently white.
    ->Make cool tones (JAVI working on this)
-   ->Perfect environment tone should only play once per 4 hours? even if you temporarily exit perfect environment. If you don't leave perfect environment, it won't go off ever again.
+   DONE: If you don't leave perfect environment, tone won't play again.
    DONE: (needs to be uncommented) How often do we see the lights? once every 60 sec
-   ->Go sleep when no movement is detected over 30 min wake up on accelerometer movement (D3 D4 are interrupts)
+   DONE:nGo sleep when no movement is detected over 15 min wake up on accelerometer movement (D3 D4 are interrupts)
    ->Touch "remember an idea" sequence  - - reminder after 2 hours.
    ->We need real numbers on the sensor min/max values (JAVI working on this)
    DONE: light should change to yellow, temp should be cyan, magenta sound
 
    Hardware Hacks:
-   -> Remove Battery connection from main circuit
+   DONE -> Remove Battery connection from main circuit
    -> Remove or break power LED
 */
 
@@ -38,7 +38,10 @@ uint8_t zPrevious = 0;
 uint8_t xMove = 0;
 uint8_t yMove = 0;
 uint8_t zMove = 0;
+
+int moveFlex = 2; //a little flexibility for minor vibrations
 int moveTimer = 0;
+int verySleepy = 10; //1 represents about 10 seconds (90 = 15 min)
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
 int tones[] = {100, 500, 1000};   //array for adding sound
@@ -48,21 +51,23 @@ bool resetSpin = true;
 
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
-  CircuitPlayground.strip.setBrightness(200); //brightness is between 0 and 255
+  CircuitPlayground.strip.setBrightness(180); //brightness is between 0 and 255
   Serial.begin(9600);     // Setup serial port.
 }
 
 void loop() {
+
   //check for movement
+  xPrevious = xMove; yPrevious = yMove; zPrevious = zMove;
   xMove = CircuitPlayground.motionX();
   yMove = CircuitPlayground.motionY();
   zMove = CircuitPlayground.motionZ();
 
   //if no movement enter sleep
-  if (xMove >= xPrevious - 1 && xMove <= xPrevious + 1 && yMove >= yPrevious - 1 && yMove <= yPrevious + 1 && zMove >= zPrevious - 1 && zMove <= zPrevious + 1) {
+  if (xMove >= xPrevious - moveFlex && xMove <= xPrevious + moveFlex && yMove >= yPrevious - moveFlex && yMove <= yPrevious + moveFlex && zMove >= zPrevious - moveFlex && zMove <= zPrevious + moveFlex) {
     moveTimer++;
     Serial.println(moveTimer);
-    if (moveTimer > 2) {
+    if (moveTimer > verySleepy) {
       sleepyTime();
     }
   }
@@ -86,10 +91,7 @@ void loop() {
   lightUp(tempValue, soundValue, lightValue);   //function to lights fades
 
   delay(5000);    // eventually 60 sec
-
-  xPrevious = xMove;
-  yPrevious = yMove;
-  zPrevious = zMove;
+  loop();         //necessary
 }
 
 
@@ -177,4 +179,27 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
     CircuitPlayground.strip.show();  // update pixels!
     delay(10);
   }
+}
+
+void sleepyTime() {
+  for (int i = 0; i < 7; i++) {
+    CircuitPlayground.strip.setPixelColor(pixels[i], 0, 0, 0);   //all lights off
+    CircuitPlayground.strip.show();  // update pixels!
+  }
+
+  xMove = CircuitPlayground.motionX();
+  yMove = CircuitPlayground.motionY();
+  zMove = CircuitPlayground.motionZ();
+
+  if (xMove >= xPrevious - moveFlex && xMove <= xPrevious + moveFlex && yMove >= yPrevious - moveFlex && yMove <= yPrevious + moveFlex && zMove >= zPrevious - moveFlex && zMove <= zPrevious + moveFlex) {
+    Watchdog.sleep(1500);
+  }
+  else {
+    moveTimer = 0;
+  }
+  xPrevious = xMove;
+  yPrevious = yMove;
+  zPrevious = zMove;
+
+  loop();
 }
