@@ -9,7 +9,7 @@
    DONE: Bug that causes lights to get stuck in crazy colors after some time. Might be related to SleepyDog?
    DONE: Sensor readings are single sample, need to be changed to an average of 5 to 10 samples
    DONE: What's the final color when all parameters are met?? currently white.
-   DONE:Touch "remember an idea" sequence  - - reminder after 2 hours (Andrew working on this)
+   DONE:Touch "remember an idea" sequence  - - reminder after 2 hours
    ->Make cool tones (JAVI working on this)
    ->Sensor numbers are calibrated but could use additional testing and adjustment
 
@@ -26,6 +26,10 @@
 #define TEMP A0  //Analog 0 is connected to temperature sensor
 #define SOUND A4  //Analog 4 is connected to sound sensor/microphone
 #define LIGHT A5  //Analog 5 is connected to light sensor
+#define TONE_DURATION_MS 100  // Duration in milliseconds to play a tone when touched.
+
+#define CAP_THRESHOLD    300  // Threshold for a capacitive touch (higher = less sensitive).
+#define CAP_SAMPLES      20   // Number of samples to take for a capacitive touch read.
 #define TONE_DURATION_MS 100  // Duration in milliseconds to play a tone when touched.
 
 float tMin = 70;   //min max variables for sensors temp = 70-74 sound=300-550 light=20-120
@@ -53,7 +57,7 @@ int tlength[] = {200, 250, 200};  //array for adding sound durations
 int memTones[] = {300, 350, 500, 400, 550};   //array for adding sound
 int memTonesLength[] = {200, 150, 150, 300, 300}; //array for adding sound durations
 bool startMemTimer = false;
-long memTimerInterval = 7200000;
+long memTimerInterval = 7200000;  //about 2 hours
 long memTimerBegin = 0;
 
 bool resetSpin = true;
@@ -241,9 +245,9 @@ void sleepyTime() {
   ideaButton(); rememberIdea();
 }
 
-void ideaButton() {   //function that controls the good idea button
+void ideaButton() {   //press capacitive touch pad 9 when you have a good idea 
   boolean memButton = CircuitPlayground.rightButton();
-  if (memButton == 1) {
+  if (CircuitPlayground.readCap(9, CAP_SAMPLES) >= CAP_THRESHOLD) {
     for (int i = 0; i <= sizeof(memTones); i++) {
       CircuitPlayground.playTone(memTones[i], memTonesLength[i]);
       delay(memTonesLength[i] + 5);
