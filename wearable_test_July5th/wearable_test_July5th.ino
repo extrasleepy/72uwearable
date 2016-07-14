@@ -8,14 +8,15 @@
    DONE: How often do we see the lights? once every 60 sec
    DONE:nGo sleep when no movement is detected over 15 min wake up on accelerometer movement (D3 D4 are interrupts)
    ->Touch "remember an idea" sequence  - - reminder after 2 hours.
-   ->We need real numbers on the sensor min/max values (JAVI working on this)
+   ->We need real numbers on the sensor min/max values (JAVI working on this) - light is done
    DONE: light should change to yellow, temp should be cyan, magenta sound
    -> Bug that causes lights to get stuck in crazy colors after some time. Might be related to SleepyDog?
+   -> Sensor readings are single sample, need to be changed to an average of 5 to 10 samples
 
    Hardware Hacks:
    DONE -> Remove Battery connection from main circuit
    -> Remove or break power LED
-   -> Battery not running unit when hooked to vbatt. Look into it.
+   DONE -> Battery goes from breakout board BATT to CirPlay VBATT
 */
 
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
@@ -30,10 +31,10 @@
 
 float tMin = 510;   //min max variables for sensors   < - - - these are currently a little arbitrary
 float tMax = 580;
-float sMin = 325;
-float sMax = 700;
-float lMin = 900;
-float lMax = 1100;
+float sMin = 425;
+float sMax = 550;
+float lMin = 20;  //light numbers are calibrated (pre enclosure)
+float lMax = 90;  //light numbers are calibrated (pre enclosure)
 
 uint8_t xPrevious = 0;  //variables to test movement for sleep mode
 uint8_t yPrevious = 0;
@@ -51,8 +52,8 @@ int tones[] = {100, 500, 1000};   //array for adding sound
 int tlength[] = {200, 250, 200};  //array for adding sound durations
 
 bool resetSpin = true;
-long fadeInterval = 30000; //60ish seconds
-long sinceLastFade = 29000; //fades one time right away when powered up
+long fadeInterval = 10000; //10ish seconds
+long sinceLastFade = 9000; //fades one time right away when powered up
 
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
