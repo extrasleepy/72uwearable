@@ -4,37 +4,36 @@
    DONE: White lights spin 2 times when all parameters are correct BUT ONLY ONCE PER SESSION
    DONE: If you don't leave perfect environment, tone won't play again.
    DONE: How often do we see the lights? once every 60 sec
-   DONE:nGo sleep when no movement is detected over 15 min wake up on accelerometer movement (D3 D4 are interrupts)
+   DONE: Go sleep when no movement is detected over 15+ min, wake up on accelerometer movement (D3 D4 are interrupts)
    DONE: light should change to yellow, temp should be cyan, magenta sound
    DONE: Bug that causes lights to get stuck in crazy colors after some time. Might be related to SleepyDog?
-   ->What's the final color when all parameters are met?? currently white.
+   DONE: Sensor readings are single sample, need to be changed to an average of 5 to 10 samples
+   DONE: What's the final color when all parameters are met?? currently white.
+   DONE:Touch "remember an idea" sequence  - - reminder after 2 hours (Andrew working on this)
    ->Make cool tones (JAVI working on this)
-   ->We need real numbers on the sensor min/max values (JAVI working on this) - light is done
-   -> Sensor readings are single sample, need to be changed to an average of 5 to 10 samples
-   -> Touch "remember an idea" sequence  - - reminder after 2 hours.
+   ->Sensor numbers are calibrated but could use additional testing and adjustment
+
 
    Hardware Hacks:
    DONE -> Remove Battery connection from main circuit
-   -> Remove or break power LED
+   DONE -> Remove or break power LED
    DONE -> Battery goes from breakout board BATT to CirPlay VBATT
 */
 
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
 #include <Adafruit_SleepyDog.h>  //library that allows low power sleeping
 
-
 #define TEMP A0  //Analog 0 is connected to temperature sensor
 #define SOUND A4  //Analog 4 is connected to sound sensor/microphone
 #define LIGHT A5  //Analog 5 is connected to light sensor
-
 #define TONE_DURATION_MS 100  // Duration in milliseconds to play a tone when touched.
 
-float tMin = 510;   //min max variables for sensors   < - - - these are currently a little arbitrary
-float tMax = 580;
-float sMin = 425;
+float tMin = 70;   //min max variables for sensors temp = 70-74 sound=300-550 light=20-120
+float tMax = 74;   //all these numbers could use some testing
+float sMin = 300;
 float sMax = 550;
-float lMin = 20;  //light numbers are calibrated (pre enclosure)
-float lMax = 120;  //light numbers are calibrated (pre enclosure)
+float lMin = 20;
+float lMax = 120;
 
 uint8_t xPrevious = 0;  //variables to test movement for sleep mode
 uint8_t yPrevious = 0;
@@ -51,9 +50,16 @@ int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
 int tones[] = {100, 500, 1000};   //array for adding sound
 int tlength[] = {200, 250, 200};  //array for adding sound durations
 
+int memTones[] = {300, 350, 500, 400, 550};   //array for adding sound
+int memTonesLength[] = {200, 150, 150, 300, 300}; //array for adding sound durations
+bool startMemTimer = false;
+long memTimerInterval = 7200000;
+long memTimerBegin = 0;
+
 bool resetSpin = true;
-long fadeInterval = 10000; //10ish seconds
-long sinceLastFade = 9000; //fades one time right away when powered up
+
+long fadeInterval = 60000; //60ish seconds
+long sinceLastFade = 59000; //fades one time right away when powered up
 
 uint16_t tempValue = 0;
 uint16_t soundValue = 0;
@@ -66,6 +72,9 @@ void setup() {
 }
 
 void loop() {
+
+  ideaButton();
+  rememberIdea();
 
   //check for movement
   xPrevious = xMove; yPrevious = yMove; zPrevious = zMove;
@@ -80,40 +89,41 @@ void loop() {
     if (moveTimer > verySleepy) {
       sleepyTime();
     }
-  }
-  else {
+  } else {
     Serial.println("moving");
     moveTimer = 0;
   }
+  if (moveTimer < verySleepy) {
 
-  // Get the sensor sensor values
-  uint16_t tempSample = 0;
-  uint16_t soundSample = 0;
-  uint16_t lightSample = 0;
+    // Get the sensor sensor values
+    uint16_t tempSample = 0;
+    uint16_t soundSample = 0;
+    uint16_t lightSample = 0;
 
-  for (int i = 0; i < 10; i++) {  //take 10 samples over 1 second
+    for (int i = 0; i < 10; i++) {  //take 10 samples over 1 second
 
-    tempSample += analogRead(TEMP);
-    soundSample += analogRead(SOUND);
-    lightSample += analogRead(LIGHT);
-    delay(100);
-  }
-  tempValue = tempSample / 10;   //average the 10 samples
-  soundValue = soundSample / 10;
-  lightValue = lightSample / 10;
+      tempSample += CircuitPlayground.temperatureF();
+      soundSample += analogRead(SOUND);
+      lightSample += analogRead(LIGHT);
+      delay(100);
+    }
+    tempValue = tempSample / 10;   //average the 10 samples
+    soundValue = soundSample / 10;
+    lightValue = lightSample / 10;
 
-  //print sensor values to serial monitor
-  Serial.print("raw temp= ");
-  Serial.println(tempValue, DEC);
-  Serial.print("raw sound= ");
-  Serial.println(soundValue, DEC);
-  Serial.print("raw light= ");
-  Serial.println(lightValue, DEC);
+    //print sensor values to serial monitor
+    Serial.print("raw temp= ");
+    Serial.println(tempValue, DEC);
+    Serial.print("raw sound= ");
+    Serial.println(soundValue, DEC);
+    Serial.print("raw light= ");
+    Serial.println(lightValue, DEC);
 
-  if ((millis() - sinceLastFade) > (fadeInterval))  //use millis to determine when to fade lights
-  {
-    sinceLastFade = millis();
-    lightUp(tempValue, soundValue, lightValue);   //function to lights fades
+    if ((millis() - sinceLastFade) > (fadeInterval))  //use millis to determine when to fade lights
+    {
+      sinceLastFade = millis();
+      lightUp(tempValue, soundValue, lightValue);   //function to lights fades
+    }
   }
 }
 
@@ -134,12 +144,14 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
           CircuitPlayground.strip.setPixelColor(9 - i, fd, fd, fd); //white
           CircuitPlayground.strip.show();  // update pixels!
           delayMicroseconds(1);
+          ideaButton(); rememberIdea();
         }
         for (int fd = 255; fd >= 0; fd -= 3) {
           CircuitPlayground.strip.setPixelColor(i, fd, fd, fd);   //white
           CircuitPlayground.strip.setPixelColor(9 - i, fd, fd, fd); //white
           CircuitPlayground.strip.show();  // update pixels!
           delayMicroseconds(1);
+          ideaButton(); rememberIdea();
         }
       }
     }
@@ -152,6 +164,7 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
       for (int i = 0; i < 7; i++) {
         CircuitPlayground.strip.setPixelColor(pixels[i], fd, fd, fd);   //white
         CircuitPlayground.strip.show();  // update pixels!
+        ideaButton(); rememberIdea();
       }
     }
     else {
@@ -160,16 +173,17 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
       if (tempValue > tMin && tempValue < tMax) {
         CircuitPlayground.strip.setPixelColor(5, 0, fd, fd);     //cyan (temp)
         CircuitPlayground.strip.setPixelColor(7, 0, fd, fd);     //cyan (temp)
-
+        ideaButton(); rememberIdea();
       }
       if (soundValue > sMin && soundValue < sMax) {
         CircuitPlayground.strip.setPixelColor(0, fd, 0, fd);   //magenta (sound)
         CircuitPlayground.strip.setPixelColor(9, fd, 0, fd);   //magenta (sound)
-
+        ideaButton(); rememberIdea();
       }
       if (lightValue > lMin && lightValue < lMax) {
         CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);    //yellow (light)
         CircuitPlayground.strip.setPixelColor(4, fd, fd, 0);    //yellow (light)
+        ideaButton(); rememberIdea();
       }
     }
     CircuitPlayground.strip.show();  // update pixels!
@@ -182,20 +196,24 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
       for (int i = 0; i < 7; i++) {
         CircuitPlayground.strip.setPixelColor(pixels[i], fd, fd, fd);   //white
         CircuitPlayground.strip.show();  // update pixels!
+        ideaButton(); rememberIdea();
       }
     }
     else {
       if (tempValue > tMin && tempValue < tMax) {
         CircuitPlayground.strip.setPixelColor(5, 0, fd, fd);     //cyan (temp)
         CircuitPlayground.strip.setPixelColor(7, 0, fd, fd);     //cyan (temp)
+        ideaButton(); rememberIdea();
       }
       if (soundValue > sMin && soundValue < sMax) {
         CircuitPlayground.strip.setPixelColor(0, fd, 0, fd);   //magenta (sound)
         CircuitPlayground.strip.setPixelColor(9, fd, 0, fd);   //magenta (sound)
+        ideaButton(); rememberIdea();
       }
       if (lightValue > lMin && lightValue < lMax) {
         CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);    //yellow (light)
         CircuitPlayground.strip.setPixelColor(4, fd, fd, 0);    //yellow (light)
+        ideaButton(); rememberIdea();
       }
     }
     CircuitPlayground.strip.show();  // update pixels!
@@ -204,10 +222,7 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
 }
 
 void sleepyTime() {
-  for (int i = 0; i < 7; i++) {
-    CircuitPlayground.strip.setPixelColor(pixels[i], 0, 0, 0);   //all lights off
-    CircuitPlayground.strip.show();  // update pixels!
-  }
+  CircuitPlayground.clearPixels();
 
   xMove = CircuitPlayground.motionX();
   yMove = CircuitPlayground.motionY();
@@ -223,5 +238,32 @@ void sleepyTime() {
   yPrevious = yMove;
   zPrevious = zMove;
 
-  //loop();
+  ideaButton(); rememberIdea();
 }
+
+void ideaButton() {   //function that controls the good idea button
+  boolean memButton = CircuitPlayground.rightButton();
+  if (memButton == 1) {
+    for (int i = 0; i <= sizeof(memTones); i++) {
+      CircuitPlayground.playTone(memTones[i], memTonesLength[i]);
+      delay(memTonesLength[i] + 5);
+    }
+    startMemTimer = true;
+    memTimerBegin = millis();
+  }
+}
+
+void rememberIdea() {  //function to play sound 2 hours after idea button was pressed
+  if ((millis() - memTimerBegin) > (memTimerInterval) && startMemTimer == true)  //use millis to determine when to fade lights
+  {
+    for (int i = 0; i <= sizeof(memTones); i++) {
+      CircuitPlayground.playTone(memTones[i], memTonesLength[i]);
+      delay(memTonesLength[i] + 5);
+    }
+    startMemTimer = false;
+
+
+  }
+}
+
+
