@@ -30,7 +30,7 @@
 
 float tMin = 510;   //min max variables for sensors   < - - - these are currently a little arbitrary
 float tMax = 580;
-float sMin = 500;
+float sMin = 325;
 float sMax = 700;
 float lMin = 900;
 float lMax = 1100;
@@ -86,12 +86,12 @@ void loop() {
   uint16_t soundValue = analogRead(SOUND);
   uint16_t lightValue = analogRead(LIGHT);
   //print sensor values to serial monitor  < --- comment out later to save power
-//  Serial.print("raw temp= ");
-//  Serial.println(tempValue, DEC);
-//  Serial.print("raw sound= ");
-//  Serial.println(soundValue, DEC);
-//  Serial.print("raw light= ");
-//  Serial.println(lightValue, DEC);
+  Serial.print("raw temp= ");
+  Serial.println(tempValue, DEC);
+  Serial.print("raw sound= ");
+  Serial.println(soundValue, DEC);
+  Serial.print("raw light= ");
+  Serial.println(lightValue, DEC);
 
   if ((millis() - sinceLastFade) > (fadeInterval))
   {
@@ -99,7 +99,6 @@ void loop() {
     lightUp(tempValue, soundValue, lightValue);   //function to lights fades
   }
   delay(1000);
-  //loop();         //necessary, don't ask why :)
 }
 
 uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
