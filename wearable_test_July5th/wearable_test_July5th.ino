@@ -2,16 +2,16 @@
 
 /* TODO::
    DONE: White lights spin 2 times when all parameters are correct BUT ONLY ONCE PER SESSION
-   ->What's the final color when all parameters are met?? currently white.
-   ->Make cool tones (JAVI working on this)
    DONE: If you don't leave perfect environment, tone won't play again.
    DONE: How often do we see the lights? once every 60 sec
    DONE:nGo sleep when no movement is detected over 15 min wake up on accelerometer movement (D3 D4 are interrupts)
-   ->Touch "remember an idea" sequence  - - reminder after 2 hours.
-   ->We need real numbers on the sensor min/max values (JAVI working on this) - light is done
    DONE: light should change to yellow, temp should be cyan, magenta sound
-   -> Bug that causes lights to get stuck in crazy colors after some time. Might be related to SleepyDog?
+   DONE: Bug that causes lights to get stuck in crazy colors after some time. Might be related to SleepyDog?
+   ->What's the final color when all parameters are met?? currently white.
+   ->Make cool tones (JAVI working on this)
+   ->We need real numbers on the sensor min/max values (JAVI working on this) - light is done
    -> Sensor readings are single sample, need to be changed to an average of 5 to 10 samples
+   -> Touch "remember an idea" sequence  - - reminder after 2 hours.
 
    Hardware Hacks:
    DONE -> Remove Battery connection from main circuit
