@@ -10,9 +10,8 @@
    DONE: Sensor readings are single sample, need to be changed to an average of 5 to 10 samples
    DONE: What's the final color when all parameters are met?? currently white.
    DONE:Touch "remember an idea" sequence  - - reminder after 2 hours
-   ->Make cool tones (JAVI working on this)
+   ->Make tones more interesting
    ->Sensor numbers are calibrated but could use additional testing and adjustment
-
 
    Hardware Hacks:
    DONE -> Remove Battery connection from main circuit
@@ -84,11 +83,11 @@ void loop() {
   yMove = CircuitPlayground.motionY();
   zMove = CircuitPlayground.motionZ();
 
-  //if no movement enter sleep
+  //if no movement increment sleep timer
   if (xMove >= xPrev - moveFlex && xMove <= xPrev + moveFlex && yMove >= yPrev - moveFlex && yMove <= yPrev + moveFlex && zMove >= zPrev - moveFlex && zMove <= zPrev + moveFlex) {
     moveTimer++;
     Serial.println(moveTimer);
-    if (moveTimer > verySleepy) {
+    if (moveTimer > verySleepy) {  //if enough time has passed, go to short powersave sleep
       sleepyTime();
     }
   } else {
