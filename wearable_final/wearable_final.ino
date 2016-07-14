@@ -1,4 +1,4 @@
-//Code for 72u wearable electroincs project. Summer 2016
+//Code for 72u LOCU project. Summer 2016.
 
 /* TODO::
    DONE: White lights spin 2 times when all parameters are correct BUT ONLY ONCE PER SESSION
@@ -23,14 +23,12 @@
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
 #include <Adafruit_SleepyDog.h>  //library that allows low power sleeping
 
-#define TEMP A0  //Analog 0 is connected to temperature sensor
+#define TEMP A0   //Analog 0 is connected to temperature sensor
 #define SOUND A4  //Analog 4 is connected to sound sensor/microphone
 #define LIGHT A5  //Analog 5 is connected to light sensor
-#define TONE_DURATION_MS 100  // Duration in milliseconds to play a tone when touched.
 
-#define CAP_THRESHOLD    300  // Threshold for a capacitive touch (higher = less sensitive).
+#define CAP_THRESHOLD    100  // Threshold for a capacitive touch (higher = less sensitive).
 #define CAP_SAMPLES      20   // Number of samples to take for a capacitive touch read.
-#define TONE_DURATION_MS 100  // Duration in milliseconds to play a tone when touched.
 
 float tMin = 70;   //min max variables for sensors temp = 70-74 sound=300-550 light=20-120
 float tMax = 74;   //all these numbers could use some testing
@@ -39,55 +37,55 @@ float sMax = 550;
 float lMin = 20;
 float lMax = 120;
 
-uint8_t xPrevious = 0;  //variables to test movement for sleep mode
-uint8_t yPrevious = 0;
-uint8_t zPrevious = 0;
+uint8_t xPrev = 0;  //variables to test movement for sleep mode
+uint8_t yPrev = 0;
+uint8_t zPrev = 0;
 uint8_t xMove = 0;
 uint8_t yMove = 0;
 uint8_t zMove = 0;
 
 int moveFlex = 2; //a little flexibility for minor vibrations
-int moveTimer = 0;
+int moveTimer = 0;  //timer keeps track how long since last movement
 int verySleepy = 900; //1 represents about 1 second + total light fade times (900 = 20ish min)
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
-int tones[] = {100, 500, 1000};   //array for adding sound
-int tlength[] = {200, 250, 200};  //array for adding sound durations
+int perfectTones[] = {100, 500, 1000};   //array for perfect environment sound
+int perfectTonesLength[] = {200, 250, 200};  //array for adding sound durations
 
-int memTones[] = {300, 350, 500, 400, 550};   //array for adding sound
-int memTonesLength[] = {200, 150, 150, 300, 300}; //array for adding sound durations
-bool startMemTimer = false;
-long memTimerInterval = 7200000;  //about 2 hours
-long memTimerBegin = 0;
+int memTones[] = {300, 350, 500, 400, 550};   //array for idea button tones
+int memTonesLength[] = {200, 150, 150, 300, 300}; //array for idea button tone lengths
+bool startMemTimer = false;  //used for idea button
+long memTimerInterval = 7200000;  //time before idea reminder tone (about 2 hours)
+long memTimerBegin = 0;  //timer keeps track how long since idea button pressed
 
-bool resetSpin = true;
+bool resetSpin = true;  //keeps track of how often light spin happens
 
-long fadeInterval = 60000; //60ish seconds
+long fadeInterval = 60000; // interval between light fades (60ish seconds)
 long sinceLastFade = 59000; //fades one time right away when powered up
 
-uint16_t tempValue = 0;
+uint16_t tempValue = 0;   //used to average sensors
 uint16_t soundValue = 0;
 uint16_t lightValue = 0;
 
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
-  CircuitPlayground.strip.setBrightness(180); //brightness is between 0 and 255
+  CircuitPlayground.strip.setBrightness(170); //brightness is between 0 and 255
   Serial.begin(9600);     // Setup serial port.
 }
 
 void loop() {
 
-  ideaButton();
-  rememberIdea();
+  ideaButton();   //check idea button state
+  rememberIdea();  //play idea reminder if enough time has passed
 
   //check for movement
-  xPrevious = xMove; yPrevious = yMove; zPrevious = zMove;
+  xPrev = xMove; yPrev = yMove; zPrev = zMove;
   xMove = CircuitPlayground.motionX();
   yMove = CircuitPlayground.motionY();
   zMove = CircuitPlayground.motionZ();
 
   //if no movement enter sleep
-  if (xMove >= xPrevious - moveFlex && xMove <= xPrevious + moveFlex && yMove >= yPrevious - moveFlex && yMove <= yPrevious + moveFlex && zMove >= zPrevious - moveFlex && zMove <= zPrevious + moveFlex) {
+  if (xMove >= xPrev - moveFlex && xMove <= xPrev + moveFlex && yMove >= yPrev - moveFlex && yMove <= yPrev + moveFlex && zMove >= zPrev - moveFlex && zMove <= zPrev + moveFlex) {
     moveTimer++;
     Serial.println(moveTimer);
     if (moveTimer > verySleepy) {
@@ -97,6 +95,7 @@ void loop() {
     Serial.println("moving");
     moveTimer = 0;
   }
+
   if (moveTimer < verySleepy) {
 
     // Get the sensor sensor values
@@ -131,16 +130,17 @@ void loop() {
   }
 }
 
+//function control lights and sound based on sensor readings
 uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
 
-  //play tone if environment is perfect   <----causing clicking??
+  //play tone if environment is perfect
   if (tempValue > tMin && tempValue < tMax && soundValue > sMin && soundValue < sMax && lightValue > lMin && lightValue < lMax && resetSpin == true) {
-    for (int i = 0; i <= sizeof(tones - 1); i++) {
-      CircuitPlayground.playTone(tones[i], tlength[i]);
-      delay(tlength[i]);
+    for (int i = 0; i <= sizeof(perfectTones - 1); i++) {
+      CircuitPlayground.playTone(perfectTones[i], perfectTonesLength[i]);
+      delay(perfectTonesLength[i]);
     }
 
-    //spin twice
+    //light spin twice
     for (int spin = 0; spin < 3; spin++) {   //spin happens twice
       for (int i = 0; i < 10; i++) {    //fade each of the 6 lights
         for (int fd = 0; fd <= 255; fd += 3) {
@@ -225,6 +225,7 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
   }
 }
 
+//function to save power when LOCU is at rest for specified time
 void sleepyTime() {
   CircuitPlayground.clearPixels();
 
@@ -232,20 +233,22 @@ void sleepyTime() {
   yMove = CircuitPlayground.motionY();
   zMove = CircuitPlayground.motionZ();
 
-  if (xMove >= xPrevious - moveFlex && xMove <= xPrevious + moveFlex && yMove >= yPrevious - moveFlex && yMove <= yPrevious + moveFlex && zMove >= zPrevious - moveFlex && zMove <= zPrevious + moveFlex) {
-    Watchdog.sleep(1500);
+  if (xMove >= xPrev - moveFlex && xMove <= xPrev + moveFlex && yMove >= yPrev - moveFlex && yMove <= yPrev + moveFlex && zMove >= zPrev - moveFlex && zMove <= zPrev + moveFlex) {
+    Watchdog.sleep(1000);
   }
   else {
     moveTimer = 0;
   }
-  xPrevious = xMove;
-  yPrevious = yMove;
-  zPrevious = zMove;
+
+  xPrev = xMove;
+  yPrev = yMove;
+  zPrev = zMove;
 
   ideaButton(); rememberIdea();
 }
 
-void ideaButton() {   //press capacitive touch pad 9 when you have a good idea 
+//checks to see if idea button had been pressed - press capacitive touch pad 9 when you have a good idea
+void ideaButton() {
   boolean memButton = CircuitPlayground.rightButton();
   if (CircuitPlayground.readCap(9, CAP_SAMPLES) >= CAP_THRESHOLD) {
     for (int i = 0; i <= sizeof(memTones); i++) {
@@ -257,7 +260,8 @@ void ideaButton() {   //press capacitive touch pad 9 when you have a good idea
   }
 }
 
-void rememberIdea() {  //function to play sound 2 hours after idea button was pressed
+//plays idea button reminder if enough time had passed - 2 hours after idea button was pressed
+void rememberIdea() {
   if ((millis() - memTimerBegin) > (memTimerInterval) && startMemTimer == true)  //use millis to determine when to fade lights
   {
     for (int i = 0; i <= sizeof(memTones); i++) {
@@ -265,8 +269,6 @@ void rememberIdea() {  //function to play sound 2 hours after idea button was pr
       delay(memTonesLength[i] + 5);
     }
     startMemTimer = false;
-
-
   }
 }
 
