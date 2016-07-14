@@ -34,7 +34,7 @@ float tMax = 580;
 float sMin = 425;
 float sMax = 550;
 float lMin = 20;  //light numbers are calibrated (pre enclosure)
-float lMax = 90;  //light numbers are calibrated (pre enclosure)
+float lMax = 120;  //light numbers are calibrated (pre enclosure)
 
 uint8_t xPrevious = 0;  //variables to test movement for sleep mode
 uint8_t yPrevious = 0;
@@ -54,6 +54,10 @@ int tlength[] = {200, 250, 200};  //array for adding sound durations
 bool resetSpin = true;
 long fadeInterval = 10000; //10ish seconds
 long sinceLastFade = 9000; //fades one time right away when powered up
+
+uint16_t tempValue = 0;
+uint16_t soundValue = 0;
+uint16_t lightValue = 0;
 
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
@@ -83,10 +87,22 @@ void loop() {
   }
 
   // Get the sensor sensor values
-  uint16_t tempValue = analogRead(TEMP);
-  uint16_t soundValue = analogRead(SOUND);
-  uint16_t lightValue = analogRead(LIGHT);
-  //print sensor values to serial monitor  < --- comment out later to save power
+  uint16_t tempSample = 0;
+  uint16_t soundSample = 0;
+  uint16_t lightSample = 0;
+
+  for (int i = 0; i < 10; i++) {  //take 10 samples over 1 second
+
+    tempSample += analogRead(TEMP);
+    soundSample += analogRead(SOUND);
+    lightSample += analogRead(LIGHT);
+    delay(100);
+  }
+  tempValue = tempSample / 10;   //average the 10 samples
+  soundValue = soundSample / 10;
+  lightValue = lightSample / 10;
+
+  //print sensor values to serial monitor
   Serial.print("raw temp= ");
   Serial.println(tempValue, DEC);
   Serial.print("raw sound= ");
@@ -94,12 +110,11 @@ void loop() {
   Serial.print("raw light= ");
   Serial.println(lightValue, DEC);
 
-  if ((millis() - sinceLastFade) > (fadeInterval))
+  if ((millis() - sinceLastFade) > (fadeInterval))  //use millis to determine when to fade lights
   {
     sinceLastFade = millis();
     lightUp(tempValue, soundValue, lightValue);   //function to lights fades
   }
-  delay(1000);
 }
 
 uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
