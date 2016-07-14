@@ -198,7 +198,7 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
     if (tempValue > tMin && tempValue < tMax && soundValue > sMin && soundValue < sMax && lightValue > lMin && lightValue < lMax) {
       for (int i = 0; i < 7; i++) {
         CircuitPlayground.strip.setPixelColor(pixels[i], fd, fd, fd);   //white
-        CircuitPlayground.strip.show();  // update pixels!
+        CircuitPlayground.strip.show();                                 // update pixels!
         ideaButton(); rememberIdea();
       }
     }
