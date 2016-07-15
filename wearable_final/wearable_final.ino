@@ -1,19 +1,10 @@
 //Code for 72u LOCU project. Summer 2016.
 
-/* TODO::
-   DONE: White lights spin 2 times when all parameters are correct BUT ONLY ONCE PER SESSION
-   DONE: If you don't leave perfect environment, tone won't play again.
-   DONE: How often do we see the lights? once every 60 sec
-   DONE: Go sleep when no movement is detected over 15+ min, wake up on accelerometer movement (D3 D4 are interrupts)
-   DONE: light should change to yellow, temp should be cyan, magenta sound
-   DONE: Bug that causes lights to get stuck in crazy colors after some time. Might be related to SleepyDog?
-   DONE: Sensor readings are single sample, need to be changed to an average of 5 to 10 samples
-   DONE: What's the final color when all parameters are met?? currently white.
-   DONE:Touch "remember an idea" sequence  - - reminder after 2 hours
+/* ToDo:
    ->Make tones more interesting
    ->Sensor numbers are calibrated but could use additional testing and adjustment
 
-   Hardware Hacks:
+   Hardware:
    DONE -> Remove Battery connection from main circuit
    DONE -> Remove or break power LED
    DONE -> Battery goes from breakout board BATT to CirPlay VBATT
@@ -73,7 +64,6 @@ void setup() {
 }
 
 void loop() {
-
   ideaButton();   //check idea button state
   rememberIdea();  //play idea reminder if enough time has passed
 
@@ -96,7 +86,6 @@ void loop() {
   }
 
   if (moveTimer < verySleepy) {
-
     // Get the sensor sensor values
     uint16_t tempSample = 0;
     uint16_t soundSample = 0;
@@ -129,7 +118,7 @@ void loop() {
   }
 }
 
-//function control lights and sound based on sensor readings
+//function to control lights and sound based on sensor readings
 uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
 
   //play tone if environment is perfect
@@ -169,8 +158,7 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
         CircuitPlayground.strip.show();  // update pixels!
         ideaButton(); rememberIdea();
       }
-    }
-    else {
+    } else {
       resetSpin = true;
 
       if (tempValue > tMin && tempValue < tMax) {
@@ -233,9 +221,8 @@ void sleepyTime() {
   zMove = CircuitPlayground.motionZ();
 
   if (xMove >= xPrev - moveFlex && xMove <= xPrev + moveFlex && yMove >= yPrev - moveFlex && yMove <= yPrev + moveFlex && zMove >= zPrev - moveFlex && zMove <= zPrev + moveFlex) {
-    Watchdog.sleep(1000);
-  }
-  else {
+    Watchdog.sleep(1000);    //save power for 1 second
+  } else {
     moveTimer = 0;
   }
 
@@ -246,7 +233,7 @@ void sleepyTime() {
   ideaButton(); rememberIdea();
 }
 
-//checks to see if idea button had been pressed - press capacitive touch pad 9 when you have a good idea
+//checks to see if idea button had been pressed - touch capacitive touch pad 9 when you have a good idea
 void ideaButton() {
   boolean memButton = CircuitPlayground.rightButton();
   if (CircuitPlayground.readCap(9, CAP_SAMPLES) >= CAP_THRESHOLD) {
