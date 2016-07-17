@@ -24,7 +24,7 @@ float tMin = 70;   //min max variables for sensors temp = 70-74 sound=300-550 li
 float tMax = 74;   //all these numbers could use some testing
 float sMin = 300;
 float sMax = 550;
-float lMin = 20;
+float lMin = 10;
 float lMax = 120;
 
 uint8_t xPrev = 0;  //variables to test movement for sleep mode
@@ -45,7 +45,7 @@ int perfectTonesLength[] = {200, 250, 200};  //array for adding sound durations
 int memTones[] = {300, 350, 500, 400, 550};   //array for idea button tones
 int memTonesLength[] = {200, 150, 150, 300, 300}; //array for idea button tone lengths
 bool startMemTimer = false;  //used for idea button
-long memTimerInterval = 1800000;  //time before idea reminder tone (about 2 hours)  - - testing 30 min
+long memTimerInterval = 7200000;  //time before idea reminder tone (about 2 hours)
 long memTimerBegin = 0;  //timer keeps track how long since idea button pressed
 
 bool resetSpin = true;  //keeps track of how often light spin happens
