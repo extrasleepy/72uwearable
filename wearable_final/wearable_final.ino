@@ -39,11 +39,11 @@ int moveTimer = 0;  //timer keeps track how long since last movement
 int verySleepy = 900; //1 represents about 1 second + total light fade times (900 = 20ish min)
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
-int perfectTones[] = {100, 500, 1000};   //array for perfect environment sound
-int perfectTonesLength[] = {200, 250, 200};  //array for adding sound durations
+int perfectTones[] =       {300, 380, 440, 620};   //array for perfect environment sound
+int perfectTonesLength[] = {125, 125, 200, 300};  //array for adding sound durations
 
-int memTones[] = {300, 350, 500, 400, 550};   //array for idea button tones
-int memTonesLength[] = {200, 150, 150, 300, 300}; //array for idea button tone lengths
+int memTones[] =       {880, 620, 480, 520, 480, 880, 780}; //array for idea button tones
+int memTonesLength[] = {125, 125, 125, 125, 250, 125, 250}; //array for idea button tone lengths
 bool startMemTimer = false;  //used for idea button
 long memTimerInterval = 3600000;  //time before idea reminder tone (about 2 hours)
 long memTimerBegin = 0;  //timer keeps track how long since idea button pressed
@@ -123,7 +123,7 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
 
   //play tone if environment is perfect
   if (tempValue > tMin && tempValue < tMax && soundValue > sMin && soundValue < sMax && lightValue > lMin && lightValue < lMax && resetSpin == true) {
-    for (int i = 0; i <= sizeof(perfectTones - 1); i++) {
+    for (int i = 0; i < sizeof(perfectTones)/sizeof(int); i++) {
       CircuitPlayground.playTone(perfectTones[i], perfectTonesLength[i]);
       delay(perfectTonesLength[i]);
     }
@@ -235,24 +235,27 @@ void sleepyTime() {
 
 //checks to see if idea button had been pressed - touch capacitive touch pad 9 when you have a good idea
 void ideaButton() {
+  
   boolean memButton = CircuitPlayground.rightButton();
+
   if (CircuitPlayground.readCap(9, CAP_SAMPLES) >= CAP_THRESHOLD) {
-    for (int i = 0; i <= sizeof(memTones); i++) {
-      CircuitPlayground.playTone(memTones[i], memTonesLength[i]);
-      delay(memTonesLength[i] + 5);
+      Serial.println( sizeof(memTones)/sizeof(int) );
+      for (int i = 0; i < sizeof(memTones)/sizeof(int); i++) {
+        CircuitPlayground.playTone(memTones[i], memTonesLength[i]);
+        delay(memTonesLength[i]);
+      }
+      startMemTimer = true;
+      memTimerBegin = millis();
     }
-    startMemTimer = true;
-    memTimerBegin = millis();
-  }
 }
 
 //plays idea button reminder if enough time had passed - 2 hours after idea button was pressed
 void rememberIdea() {
   if ((millis() - memTimerBegin) > (memTimerInterval) && startMemTimer == true)  //use millis to determine when to play tone
   {
-    for (int i = 0; i <= sizeof(memTones); i++) {
+    for (int i = 0; i < sizeof(memTones)/sizeof(int); i++) {
       CircuitPlayground.playTone(memTones[i], memTonesLength[i]);
-      delay(memTonesLength[i] + 5);
+      delay(memTonesLength[i]);
     }
     startMemTimer = false;
   }
