@@ -2,6 +2,8 @@
 
 #define ANALOG_INPUT A0  //Analog 0 is connected to temperature sensor
 
+float tempCalib = 7.6;
+
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
 
@@ -15,6 +17,7 @@ void loop() {
   uint16_t value = analogRead(ANALOG_INPUT);
   Serial.print("raw templevel= ");
   Serial.println(value, DEC);
+  Serial.println(CircuitPlayground.temperatureF()-tempCalib);
 
   delay(500); // half second delay between readings
 
