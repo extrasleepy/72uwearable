@@ -3,11 +3,6 @@
 /* ToDo:
    ->Make tones more interesting
    ->Sensor numbers are calibrated but could use additional testing and adjustment
-
-   Hardware:
-   DONE -> Remove Battery connection from main circuit
-   DONE -> Remove or break power LED
-   DONE -> Battery goes from breakout board BATT to CirPlay VBATT
 */
 
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
@@ -26,6 +21,8 @@ float sMin = 300;
 float sMax = 550;
 float lMin = 10;
 float lMax = 120;
+
+float tempCalib = 10; //variable to calibrate temperature
 
 uint8_t xPrev = 0;  //variables to test movement for sleep mode
 uint8_t yPrev = 0;
@@ -93,7 +90,7 @@ void loop() {
 
     for (int i = 0; i < 10; i++) {  //take 10 samples over 1 second
 
-      tempSample += CircuitPlayground.temperatureF();
+      tempSample += CircuitPlayground.temperatureF()-tempCalib;
       soundSample += analogRead(SOUND);
       lightSample += analogRead(LIGHT);
       delay(100);
@@ -103,7 +100,7 @@ void loop() {
     lightValue = lightSample / 10;
 
     //print sensor values to serial monitor
-    Serial.print("raw temp= ");
+    Serial.print("temp F= ");
     Serial.println(tempValue, DEC);
     Serial.print("raw sound= ");
     Serial.println(soundValue, DEC);
