@@ -15,8 +15,8 @@
 #define CAP_THRESHOLD    50  // Threshold for a capacitive touch (higher = less sensitive).
 #define CAP_SAMPLES      20   // Number of samples to take for a capacitive touch read.
 
-float tMin = 70;   //min max variables for sensors temp = 70-74 sound=300-550 light=20-120
-float tMax = 74;   //all these numbers could use some testing
+float tMin = 69;   //min max variables for sensors temp = 70-74 sound=300-550 light=20-120
+float tMax = 75;   //all these numbers could use some testing
 float sMin = 300;
 float sMax = 550;
 float lMin = 10;
