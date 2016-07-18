@@ -22,7 +22,7 @@ float sMax = 550;
 float lMin = 10;
 float lMax = 120;
 
-float tempCalib = 10; //variable to calibrate temperature
+float tempCalib = 4; //variable to calibrate temperature
 
 uint8_t xPrev = 0;  //variables to test movement for sleep mode
 uint8_t yPrev = 0;
