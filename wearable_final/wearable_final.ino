@@ -17,7 +17,7 @@
 #define SOUND A4  //Analog 4 is connected to sound sensor/microphone
 #define LIGHT A5  //Analog 5 is connected to light sensor
 
-#define CAP_THRESHOLD    100  // Threshold for a capacitive touch (higher = less sensitive).
+#define CAP_THRESHOLD    50  // Threshold for a capacitive touch (higher = less sensitive).
 #define CAP_SAMPLES      20   // Number of samples to take for a capacitive touch read.
 
 float tMin = 70;   //min max variables for sensors temp = 70-74 sound=300-550 light=20-120
