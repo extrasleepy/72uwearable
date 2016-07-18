@@ -45,7 +45,7 @@ int perfectTonesLength[] = {200, 250, 200};  //array for adding sound durations
 int memTones[] = {300, 350, 500, 400, 550};   //array for idea button tones
 int memTonesLength[] = {200, 150, 150, 300, 300}; //array for idea button tone lengths
 bool startMemTimer = false;  //used for idea button
-long memTimerInterval = 4000000;  //time before idea reminder tone (about 2 hours)
+long memTimerInterval = 3500000;  //time before idea reminder tone (about 2 hours)
 long memTimerBegin = 0;  //timer keeps track how long since idea button pressed
 
 bool resetSpin = true;  //keeps track of how often light spin happens
