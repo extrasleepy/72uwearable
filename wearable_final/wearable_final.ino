@@ -36,7 +36,7 @@ uint8_t zMove = 0;
 
 int moveFlex = 2; //a little flexibility for minor vibrations
 int moveTimer = 0;  //timer keeps track how long since last movement
-int verySleepy = 900; //1 represents about 1 second + total light fade times (900 = 20ish min)
+int verySleepy = 1400; //1 represents about 1 second + total light fade times (1400 = 30ish min)
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
 int perfectTones[] = {100, 500, 1000};   //array for perfect environment sound
@@ -45,7 +45,7 @@ int perfectTonesLength[] = {200, 250, 200};  //array for adding sound durations
 int memTones[] = {300, 350, 500, 400, 550};   //array for idea button tones
 int memTonesLength[] = {200, 150, 150, 300, 300}; //array for idea button tone lengths
 bool startMemTimer = false;  //used for idea button
-long memTimerInterval = 3600000;  //time before idea reminder tone (about 2 hours)
+long memTimerInterval = 4000000;  //time before idea reminder tone (about 2 hours)
 long memTimerBegin = 0;  //timer keeps track how long since idea button pressed
 
 bool resetSpin = true;  //keeps track of how often light spin happens
