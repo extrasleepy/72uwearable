@@ -1,10 +1,5 @@
 //Code for 72u LOCU project. Summer 2016.
 
-/* ToDo:
-   ->Make tones more interesting
-   ->Sensor numbers are calibrated but could use additional testing and adjustment
-*/
-
 #include <Adafruit_CircuitPlayground.h>   //required library to use module
 #include <Adafruit_SleepyDog.h>  //library that allows low power sleeping
 
@@ -33,17 +28,11 @@ uint8_t zMove = 0;
 
 int moveFlex = 2; //a little flexibility for minor vibrations
 int moveTimer = 0;  //timer keeps track how long since last movement
-int verySleepy = 1400; //1 represents about 1 second + total light fade times (1400 = 30ish min)
+int verySleepy = 5600; //1 represents about 1 second + total light fade times (5600 = 120ish min)
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
 int perfectTones[] =       {300, 380, 440, 620};   //array for perfect environment sound
 int perfectTonesLength[] = {125, 125, 200, 300};  //array for adding sound durations
-
-int memTones[] =       {880, 620, 480, 520, 480, 880, 780}; //array for idea button tones
-int memTonesLength[] = {125, 125, 125, 125, 250, 125, 250}; //array for idea button tone lengths
-bool startMemTimer = false;  //used for idea button
-long memTimerInterval = 4000000;  //time before idea reminder tone (about 2 hours)
-long memTimerBegin = 0;  //timer keeps track how long since idea button pressed
 
 bool resetSpin = true;  //keeps track of how often light spin happens
 
@@ -61,9 +50,6 @@ void setup() {
 }
 
 void loop() {
-  ideaButton();   //check idea button state
-  rememberIdea();  //play idea reminder if enough time has passed
-
   //check for movement
   xPrev = xMove; yPrev = yMove; zPrev = zMove;
   xMove = CircuitPlayground.motionX();
@@ -133,14 +119,12 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
           CircuitPlayground.strip.setPixelColor(9 - i, fd, fd, fd); //white
           CircuitPlayground.strip.show();  // update pixels!
           delayMicroseconds(1);
-          ideaButton(); rememberIdea();
         }
         for (int fd = 255; fd >= 0; fd -= 3) {
           CircuitPlayground.strip.setPixelColor(i, fd, fd, fd);   //white
           CircuitPlayground.strip.setPixelColor(9 - i, fd, fd, fd); //white
           CircuitPlayground.strip.show();  // update pixels!
           delayMicroseconds(1);
-          ideaButton(); rememberIdea();
         }
       }
     }
@@ -153,7 +137,6 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
       for (int i = 0; i < 7; i++) {
         CircuitPlayground.strip.setPixelColor(pixels[i], fd, fd, fd);   //white
         CircuitPlayground.strip.show();  // update pixels!
-        ideaButton(); rememberIdea();
       }
     } else {
       resetSpin = true;
@@ -161,17 +144,14 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
       if (tempValue > tMin && tempValue < tMax) {
         CircuitPlayground.strip.setPixelColor(5, 0, fd, fd);     //cyan (temp)
         CircuitPlayground.strip.setPixelColor(7, 0, fd, fd);     //cyan (temp)
-        ideaButton(); rememberIdea();
       }
       if (soundValue > sMin && soundValue < sMax) {
         CircuitPlayground.strip.setPixelColor(0, fd, 0, fd);   //magenta (sound)
         CircuitPlayground.strip.setPixelColor(9, fd, 0, fd);   //magenta (sound)
-        ideaButton(); rememberIdea();
       }
       if (lightValue > lMin && lightValue < lMax) {
         CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);    //yellow (light)
         CircuitPlayground.strip.setPixelColor(4, fd, fd, 0);    //yellow (light)
-        ideaButton(); rememberIdea();
       }
     }
     CircuitPlayground.strip.show();  // update pixels!
@@ -184,24 +164,20 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
       for (int i = 0; i < 7; i++) {
         CircuitPlayground.strip.setPixelColor(pixels[i], fd, fd, fd);   //white
         CircuitPlayground.strip.show();                                 // update pixels!
-        ideaButton(); rememberIdea();
       }
     }
     else {
       if (tempValue > tMin && tempValue < tMax) {
         CircuitPlayground.strip.setPixelColor(5, 0, fd, fd);     //cyan (temp)
         CircuitPlayground.strip.setPixelColor(7, 0, fd, fd);     //cyan (temp)
-        ideaButton(); rememberIdea();
       }
       if (soundValue > sMin && soundValue < sMax) {
         CircuitPlayground.strip.setPixelColor(0, fd, 0, fd);   //magenta (sound)
         CircuitPlayground.strip.setPixelColor(9, fd, 0, fd);   //magenta (sound)
-        ideaButton(); rememberIdea();
       }
       if (lightValue > lMin && lightValue < lMax) {
         CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);    //yellow (light)
         CircuitPlayground.strip.setPixelColor(4, fd, fd, 0);    //yellow (light)
-        ideaButton(); rememberIdea();
       }
     }
     CircuitPlayground.strip.show();  // update pixels!
@@ -226,36 +202,5 @@ void sleepyTime() {
   xPrev = xMove;
   yPrev = yMove;
   zPrev = zMove;
-
-  ideaButton(); rememberIdea();
 }
-
-//checks to see if idea button had been pressed - touch capacitive touch pad 9 when you have a good idea
-void ideaButton() {
-  
-  boolean memButton = CircuitPlayground.rightButton();
-
-  if (CircuitPlayground.readCap(9, CAP_SAMPLES) >= CAP_THRESHOLD) {
-      Serial.println( sizeof(memTones)/sizeof(int) );
-      for (int i = 0; i < sizeof(memTones)/sizeof(int); i++) {
-        CircuitPlayground.playTone(memTones[i], memTonesLength[i]);
-        delay(memTonesLength[i]);
-      }
-      startMemTimer = true;
-      memTimerBegin = millis();
-    }
-}
-
-//plays idea button reminder if enough time had passed - 2 hours after idea button was pressed
-void rememberIdea() {
-  if ((millis() - memTimerBegin) > (memTimerInterval) && startMemTimer == true)  //use millis to determine when to play tone
-  {
-    for (int i = 0; i < sizeof(memTones)/sizeof(int); i++) {
-      CircuitPlayground.playTone(memTones[i], memTonesLength[i]);
-      delay(memTonesLength[i]);
-    }
-    startMemTimer = false;
-  }
-}
-
 
