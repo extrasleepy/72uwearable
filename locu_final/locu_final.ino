@@ -14,10 +14,10 @@ float tMin = 69;   //min max variables for sensors temp = 70-74 degrees, sound=3
 float tMax = 75;   //all these numbers could use some testing
 float sMin = 300;
 float sMax = 550;
-float lMin = 20;
-float lMax = 180;
+float lMin = 40;
+float lMax = 260;
 
-float tempCalib = 4.75; //variable to calibrate temperature
+float tempCalib = 12; //variable to calibrate temperature
 
 uint8_t xPrev = 0;  //variables to test movement for sleep mode
 uint8_t yPrev = 0;
@@ -76,18 +76,18 @@ void loop() {
     // Get the sensor sensor values
     uint16_t tempSample = 0;
     uint16_t soundSample = 0;
-    uint16_t lightSample = 0;
+    uint16_t lightSample = 0;  //used to average sensors
 
-    for (int i = 0; i < 10; i++) {  //take 10 samples over 1 second
+    for (int i = 0; i < 20; i++) {  //take 10 samples over 1 second
 
       tempSample += CircuitPlayground.temperatureF() - tempCalib;
       soundSample += analogRead(SOUND);
       lightSample += analogRead(LIGHT);
       delay(100);
     }
-    tempValue = tempSample / 10;   //average the 10 samples
-    soundValue = soundSample / 10;
-    lightValue = lightSample / 10;
+    tempValue = tempSample / 20;   //average the 10 samples
+    soundValue = soundSample / 20;
+    lightValue = lightSample / 20;
 
     //print sensor values to serial monitor
     Serial.print("raw temp= ");
