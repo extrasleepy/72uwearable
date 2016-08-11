@@ -9,7 +9,7 @@
 
 float tMin = 69;   //min max variables for sensors temp = 70-74 degrees, sound=300-550 based on db, light=20-180 based on 150 lux
 float tMax = 75;
-float sMin = 25;
+float sMin = 30;
 float sMax = 85;
 float lMin = 40;
 float lMax = 260;
