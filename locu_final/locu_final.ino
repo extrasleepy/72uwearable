@@ -37,7 +37,7 @@ bool resetSpin = true;  //keeps track of how often light spin happens
 bool quietTime = false; //keeps tone from playing too often
 
 long fadeInterval = 30000; // interval between light fades (60ish seconds)
-long sinceLastFade = 29000; //fades one time right away when powered up
+long sinceLastFade = 29500; //fades one time right away when powered up
 
 uint16_t tempValue = 0;   //used to average sensors
 uint16_t lightValue = 0;
