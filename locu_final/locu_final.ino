@@ -25,9 +25,9 @@ uint8_t zMove = 0;
 
 int moveFlex = 2; //a little flexibility for minor vibrations
 int moveTimer = 0;  //timer keeps track how long since last movement
-int verySleepy = 2600; //1 represents about 1 second + total light fade times (2600 = 60ish min)
-int quietTimeInterval = 1300; //1 represents about 1 second + total light fade times (1300 = 30ish min)
-int quietTimer = 0; //timer keeps track how long since last tone
+long verySleepy = 2600;//2600; //1 represents about 1 second + total light fade times (2600 = 60ish min)
+long quietTimeInterval = 1300; //1 represents about 1 second + total light fade times (1300 = 30ish min)
+long quietTimer = 0; //timer keeps track how long since last tone
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
 int perfectTones[] =       {300, 380, 440, 620};   //array for perfect environment sound
