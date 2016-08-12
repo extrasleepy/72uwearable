@@ -25,8 +25,8 @@ uint8_t zMove = 0;
 
 int moveFlex = 2; //a little flexibility for minor vibrations
 int moveTimer = 0;  //timer keeps track how long since last movement
-long verySleepy = 2000;//2000; //1 represents about 1 second + total light fade times (2000 = 60ish min)
-long quietTimeInterval = 1300; //1 represents about 1 second + total light fade times (1300 = 30ish min)
+long verySleepy = 1500;// (1500 = 60ish min)
+long quietTimeInterval = 750; //(750 = 30ish min)
 long quietTimer = 0; //timer keeps track how long since last tone
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
@@ -71,6 +71,10 @@ void loop() {
     }
   } else {
     Serial.println("moving");
+    moveTimer = 0;
+  }
+
+  if (moveTimer >= (verySleepy + 500)) { //safegaurd
     moveTimer = 0;
   }
 
@@ -125,7 +129,7 @@ void loop() {
       lightUp(tempValue, soundValue, lightValue);   //function to lights fades
     }
   }
-  
+
   if (quietTime == true) {
     quietTimer++;
     Serial.print("qt=");
@@ -140,7 +144,7 @@ void loop() {
     quietTimer = 0;
     Serial.println("tone reset");
   }
-  
+
 }
 
 //function to control lights and sound based on sensor readings
@@ -623,9 +627,11 @@ void sleepyTime() {
 
   if (xMove >= xPrev - moveFlex && xMove <= xPrev + moveFlex && yMove >= yPrev - moveFlex && yMove <= yPrev + moveFlex && zMove >= zPrev - moveFlex && zMove <= zPrev + moveFlex) {
     Watchdog.sleep(1000);    //save power for 1 second
+    quietTime = false;
   } else {
     moveTimer = 0;
   }
+
 
   xPrev = xMove;
   yPrev = yMove;
