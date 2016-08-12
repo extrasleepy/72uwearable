@@ -25,7 +25,7 @@ uint8_t zMove = 0;
 
 int moveFlex = 2; //a little flexibility for minor vibrations
 int moveTimer = 0;  //timer keeps track how long since last movement
-long verySleepy = 2600;//2600; //1 represents about 1 second + total light fade times (2600 = 60ish min)
+long verySleepy = 2000;//2000; //1 represents about 1 second + total light fade times (2000 = 60ish min)
 long quietTimeInterval = 1300; //1 represents about 1 second + total light fade times (1300 = 30ish min)
 long quietTimer = 0; //timer keeps track how long since last tone
 
