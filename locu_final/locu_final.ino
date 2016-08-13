@@ -75,6 +75,10 @@ void loop() {
     sinceLastFade = 29500;
   }
 
+  if (moveTimer >= (verySleepy + 500)) { //safegaurd
+    moveTimer = 0;
+  }
+
   if (moveTimer < verySleepy) {
     // Get the sensor sensor values
     uint16_t tempSample = 0;
@@ -126,7 +130,7 @@ void loop() {
       lightUp(tempValue, soundValue, lightValue);   //function to lights fades
     }
   }
-  
+
   if (quietTime == true) {
     quietTimer++;
     Serial.print("qt=");
@@ -141,7 +145,7 @@ void loop() {
     quietTimer = 0;
     Serial.println("tone reset");
   }
-  
+
 }
 
 //function to control lights and sound based on sensor readings
@@ -624,10 +628,12 @@ void sleepyTime() {
 
   if (xMove >= xPrev - moveFlex && xMove <= xPrev + moveFlex && yMove >= yPrev - moveFlex && yMove <= yPrev + moveFlex && zMove >= zPrev - moveFlex && zMove <= zPrev + moveFlex) {
     Watchdog.sleep(1000);    //save power for 1 second
+    quietTime = false;
   } else {
     moveTimer = 0;
     sinceLastFade = 29500;
   }
+
 
   xPrev = xMove;
   yPrev = yMove;
