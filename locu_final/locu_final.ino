@@ -24,10 +24,10 @@ uint8_t yMove = 0;
 uint8_t zMove = 0;
 
 int moveFlex = 2; //a little flexibility for minor vibrations
-long moveTimer = 0;  //timer keeps track how long since last movement
-long verySleepy = 50;//2000; //1 represents about 1 second + total light fade times (2000 = 60ish min)
-long quietTimeInterval = 1300; //1 represents about 1 second + total light fade times (1300 = 30ish min)
-long quietTimer = 0; //timer keeps track how long since last tone
+unsigned long moveTimer = 0;  //timer keeps track how long since last movement
+unsigned long verySleepy = 2000; //1 represents about 1 second + total light fade times (2000 = 60ish min)
+unsigned long quietTimeInterval = 1300; //1 represents about 1 second + total light fade times (1300 = 30ish min)
+unsigned long quietTimer = 0; //timer keeps track how long since last tone
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
 int perfectTones[] = {300, 380, 440, 620};   //array for perfect environment sound
@@ -64,7 +64,9 @@ void loop() {
 
   //if no movement increment sleep timer
   if (xMove >= xPrev - moveFlex && xMove <= xPrev + moveFlex && yMove >= yPrev - moveFlex && yMove <= yPrev + moveFlex && zMove >= zPrev - moveFlex && zMove <= zPrev + moveFlex) {
-    moveTimer++;
+    if (moveTimer < verySleepy + 20) {
+      moveTimer++;
+    }
     Serial.println(moveTimer);
     if (moveTimer > verySleepy) {  //if enough time has passed, go to short powersave sleep
       sleepyTime();
@@ -73,10 +75,6 @@ void loop() {
     Serial.println("moving");
     moveTimer = 0;
     sinceLastFade = 29500;
-  }
-
-  if (moveTimer >= (verySleepy + 500)) { //safegaurd
-    moveTimer = 0;
   }
 
   if (moveTimer < verySleepy) {
