@@ -24,13 +24,13 @@ uint8_t yMove = 0;
 uint8_t zMove = 0;
 
 int moveFlex = 2; //a little flexibility for minor vibrations
-int moveTimer = 0;  //timer keeps track how long since last movement
-long verySleepy = 2000;//2000; //1 represents about 1 second + total light fade times (2000 = 60ish min)
+long moveTimer = 0;  //timer keeps track how long since last movement
+long verySleepy = 50;//2000; //1 represents about 1 second + total light fade times (2000 = 60ish min)
 long quietTimeInterval = 1300; //1 represents about 1 second + total light fade times (1300 = 30ish min)
 long quietTimer = 0; //timer keeps track how long since last tone
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
-int perfectTones[] =       {300, 380, 440, 620};   //array for perfect environment sound
+int perfectTones[] = {300, 380, 440, 620};   //array for perfect environment sound
 int perfectTonesLength[] = {125, 125, 200, 300};  //array for adding sound durations
 
 bool resetSpin = true;  //keeps track of how often light spin happens
@@ -72,6 +72,7 @@ void loop() {
   } else {
     Serial.println("moving");
     moveTimer = 0;
+    sinceLastFade = 29500;
   }
 
   if (moveTimer < verySleepy) {
@@ -198,7 +199,7 @@ uint16_t lightUp(uint16_t tempValue, uint16_t soundValue, uint16_t lightValue) {
   } else {
     resetSpin = true;
     //-----temp and light--------
-    if (lightValue > lMin && lightValue < lMax && tempValue > sMin && tempValue < sMax) {
+    if (lightValue > lMin && lightValue < lMax && tempValue > tMin && tempValue < tMax) {
       for (int fd = 0; fd < 127; fd++) {
         CircuitPlayground.strip.setPixelColor(2, fd, fd, 0);     //yellow (light)
         CircuitPlayground.strip.setPixelColor(5, 0, fd, fd);     //cyan (temp)
@@ -625,6 +626,7 @@ void sleepyTime() {
     Watchdog.sleep(1000);    //save power for 1 second
   } else {
     moveTimer = 0;
+    sinceLastFade = 29500;
   }
 
   xPrev = xMove;
