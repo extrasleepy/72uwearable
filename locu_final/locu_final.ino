@@ -9,12 +9,12 @@
 
 float tMin = 69;   //min max variables for sensors temp = 70-74 degrees, sound=300-550 based on db, light=20-180 based on 150 lux
 float tMax = 75;
-float sMin = 30;
-float sMax = 85;
+float sMin = 40;
+float sMax = 100;
 float lMin = 40;
 float lMax = 260;
 
-float tempCalib = 8; //variable to calibrate temperature
+float tempCalib = 6; //variable to calibrate temperature
 
 uint8_t xPrev = 0;  //variables to test movement for sleep mode
 uint8_t yPrev = 0;
@@ -25,8 +25,8 @@ uint8_t zMove = 0;
 
 int moveFlex = 2; //a little flexibility for minor vibrations
 int moveTimer = 0;  //timer keeps track how long since last movement
-long verySleepy = 1500;// (1500 = 60ish min)
-long quietTimeInterval = 750; //(750 = 30ish min)
+long verySleepy = 1500;// (1500 = 90ish min)
+long quietTimeInterval = 750; //(750 = 40ish min)
 long quietTimer = 0; //timer keeps track how long since last tone
 
 int pixels[] = {0, 2, 4, 5, 7, 9};   //array of used light pins
