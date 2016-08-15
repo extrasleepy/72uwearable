@@ -50,7 +50,7 @@ int between = 15;
 
 void setup() {
   CircuitPlayground.begin();     // Setup Circuit Playground library.
-  CircuitPlayground.strip.setBrightness(170); //brightness is between 0 and 255
+  CircuitPlayground.strip.setBrightness(160); //brightness is between 0 and 255
   Serial.begin(9600);     // Setup serial port.
 }
 
@@ -74,7 +74,6 @@ void loop() {
   } else {
     Serial.println("moving");
     moveTimer = 0;
-    sinceLastFade = 29500;
   }
 
   if (moveTimer < verySleepy) {
