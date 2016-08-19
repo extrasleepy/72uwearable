@@ -9,12 +9,12 @@
 
 float tMin = 69;   //min max variables for sensors temp = 70-74 degrees, sound=300-550 based on db, light=20-180 based on 150 lux
 float tMax = 75;
-float sMin = 40;
+float sMin = 20;
 float sMax = 100;
 float lMin = 40;
 float lMax = 260;
 
-float tempCalib = 6; //variable to calibrate temperature
+float tempCalib = 8; //variable to calibrate temperature
 
 uint8_t xPrev = 0;  //variables to test movement for sleep mode
 uint8_t yPrev = 0;
@@ -23,9 +23,9 @@ uint8_t xMove = 0;
 uint8_t yMove = 0;
 uint8_t zMove = 0;
 
-int moveFlex = 2; //a little flexibility for minor vibrations
+int moveFlex = 3; //a little flexibility for minor vibrations
 unsigned long moveTimer = 0;  //timer keeps track how long since last movement
-unsigned long verySleepy = 1500; //1 represents about 1 second + total light fade times (1500 = 90ish min)
+unsigned long verySleepy = 1000;//1 represents about 1 second + total light fade times (1000 = 60ish min)
 unsigned long quietTimeInterval = 750; //1 represents about 1 second + total light fade times (750 = 45ish min)
 unsigned long quietTimer = 0; //timer keeps track how long since last tone
 
@@ -114,11 +114,11 @@ void loop() {
     soundValue = signalMax - signalMin;  // max - min = peak-peak amplitude
 
     //print sensor values to serial monitor
-    Serial.print("raw temp= ");
+    Serial.print("temp= ");
     Serial.println(tempValue, DEC);
-    Serial.print("raw sound= ");
+    Serial.print("sound= ");
     Serial.println(soundValue, DEC);
-    Serial.print("raw light= ");
+    Serial.print("light= ");
     Serial.println(lightValue, DEC);
 
     if ((millis() - sinceLastFade) > (fadeInterval))  //use millis to determine when to fade lights
@@ -624,7 +624,7 @@ void sleepyTime() {
   zMove = CircuitPlayground.motionZ();
 
   if (xMove >= xPrev - moveFlex && xMove <= xPrev + moveFlex && yMove >= yPrev - moveFlex && yMove <= yPrev + moveFlex && zMove >= zPrev - moveFlex && zMove <= zPrev + moveFlex) {
-    Watchdog.sleep(1000);    //save power for 1 second
+    Watchdog.sleep(1500);    //save power for 1.5 second
     quietTime = false;
   } else {
     moveTimer = 0;
